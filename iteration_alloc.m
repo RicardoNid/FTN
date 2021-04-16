@@ -110,10 +110,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
             %         QAM_re_sum{i}= QAM_re;
             %  // ======================================================================
             %% Code properties(channel coding)
-            constlen = 7;
-            codegen = [171 133];
-            tblen = 90;
-            trellis = poly2trellis(constlen, codegen);
+
             %% de-mapping
             M = 2^bitAllocSort(i);
 
@@ -149,8 +146,4 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     end
 
     demodulatedMsg_HD = interleavedMsg(:);
-    %% viterbi decoder
-    % Use the Viterbi decoder in hard decision mode(recvbits)
-    bits = ones(bitNumber, 1);
-    decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
-    decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
+    decodedMsg_HD = Vitdec(demodulatedMsg_HD);

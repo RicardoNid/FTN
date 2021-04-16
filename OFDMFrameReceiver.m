@@ -18,6 +18,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     bitNumber = OFDMParameters.bitNumber;
     SToPcol = OFDMParameters.SToPcol;
     FFTSize = OFDMParameters.FFTSize;
+    global tblen
     % (5) // ======================================================================
     % 计算BER时，产生sendbits的时候需要
     % OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
@@ -66,11 +67,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
                 carrierPosition = BitAllocSum{i};
                 QAM = reshape(recovered(carrierPosition, :), [], 1);
                 QAM_re = QAM / rms(QAM) * rmsAlloc(i);
-                % Code properties(channel coding)
-                constlen = 7;
-                codegen = [171 133];
-                tblen = 90;
-                trellis = poly2trellis(constlen, codegen);
                 % de-mapping
                 M = 2^bitAllocSort(i);
 
@@ -108,11 +104,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         demodulatedMsg_HD = codeMsg(:);
 
-        % viterbi decoder
-        % Use the Viterbi decoder in hard decision mode(recvbits)
-        bits = ones(bitNumber, 1);
-        decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
-        decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
+        decodedMsg_HD = Vitdec(demodulatedMsg_HD);
 
         % iteration
         for iter = 1:iterationT
@@ -131,10 +123,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         recoveredSymbols = recoveredSymbols / rms(recoveredSymbols) * sqrt(10);
         recoveredSymbols_FDE = recoveredSymbols;
         % Code properties(channel coding)
-        constlen = 7;
-        codegen = [171 133];
-        tblen = 90;
-        trellis = poly2trellis(constlen, codegen);
 
         % de-mapping
         M = 2^BitsPerSymbolQAM;
@@ -160,16 +148,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         % viterbi decoder
         % Use the Viterbi decoder in hard decision mode
-        decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
-        bits = ones(bitNumber, 1);
-        decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
-        % (11) // ======================================================================
-        %    计算迭代前的误码率
-        %     [nErrors_HD, ber_HD] = biterr(decodedMsg_HD, bits);
-        %     number_of_error=nErrors_HD;
-        %     BER_MC=ber_HD;
-        %  // ======================================================================
-
+        decodedMsg_HD = Vitdec(demodulatedMsg_HD);
         %iteration
         for i = 1:iterationT
             % (12) // =====================带有误码率的输出=====================================

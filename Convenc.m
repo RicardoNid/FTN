@@ -1,5 +1,5 @@
 function [codedBits] = Convenc(bits)
-    constlen = 7;
-    codegen = [171 133];
-    trellis = poly2trellis(constlen, codegen);
+    global ConvConstLen
+    global ConvCodeGen
+    trellis = poly2trellis (ConvConstLen, ConvCodeGen);
     codedBits = convenc(bits, trellis);

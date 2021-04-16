@@ -47,5 +47,12 @@ function OFDMParameters = InitOFDMParameters()
     global SubcarriersNum
     SubcarriersNum = length(OFDMParameters.DataCarrierPositions);
 
+    %% 卷积编码-维特比译码参数
+    global ConvConstLen
+    ConvConstLen = 7;
+
+    global ConvCodeGen
+    ConvCodeGen = [171, 133];
+
     global tblen
     tblen = 90;

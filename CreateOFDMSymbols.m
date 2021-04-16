@@ -23,7 +23,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         rmsAlloc = [];
         ifftBlock = zeros(FFTSize, SToPcol);
 
-        bits = BitGen(cir);
+        bits = BitGen(Seed(cir));
         bitsPerFrame = bits;
 
         % Channel Coding

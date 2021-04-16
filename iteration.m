@@ -57,11 +57,6 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     %% ICI
     ICI = recoveredSymbols - S_HD;
     recoveredSymbols = recoveredSymbols_FDE - ICI;
-    %%
-    % Code properties
-    constlen = 7;
-    codegen = [171 133];
-    trellis = poly2trellis(constlen, codegen);
 
     %% de-mapping
     M = 2^BitsPerSymbolQAM;
@@ -82,9 +77,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
 
     demodulatedMsg_HD = codedMsg(:);
     %% Use the Viterbi decoder in hard decision mode
-    decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard'); %该参数需要返回iteration,不断迭代更新
-    bits = ones(bitNumber, 1);
-    decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
+    decodedMsg_HD = Vitdec(demodulatedMsg_HD);
     % (20) // ======================================================================
     %    计算误码率
     % % output
