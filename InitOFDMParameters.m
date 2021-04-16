@@ -23,11 +23,29 @@ function OFDMParameters = InitOFDMParameters()
     OFDMParameters.bitNumber = OFDMParameters.OFDMSymbolNumber * length(OFDMParameters.DataCarrierPositions) * OFDMParameters.BitsPerSymbolQAM;
     OFDMParameters.SToPcol = ((OFDMParameters.bitNumber * (1 / OFDMParameters.codeRate)) / OFDMParameters.BitsPerSymbolQAM) / length(OFDMParameters.DataCarrierPositions);
 
-    global FFTSize
-    FFTSize = 512;
+    global BitsPerSymbolQAM
+    BitsPerSymbolQAM = 4;
 
     global DataCarrierPositions
     DataCarrierPositions = 3:226;
 
+    global OFDMSymbolNumber
+    OFDMSymbolNumber = 8;
+
+    global PreambleSeed
+    PreambleSeed = 20;
+
+    global Seed
+    Seed = [10, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
+
+    global bitNumber
+    bitNumber = length(DataCarrierPositions) * OFDMSymbolNumber * BitsPerSymbolQAM;
+
+    global FFTSize
+    FFTSize = 512;
+
     global SubcarriersNum
     SubcarriersNum = length(OFDMParameters.DataCarrierPositions);
+
+    global tblen
+    tblen = 90;

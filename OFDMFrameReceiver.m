@@ -113,28 +113,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         bits = ones(bitNumber, 1);
         decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
         decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
-        % decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); padding];
-
-        % (8) // ======================================================================
-        %     计算迭代前的误码率
-        %     % sendbits
-        %     c=1;
-        %     for i=1:length(bitAllocSort)
-        %         if bitAllocSort(i)~=0
-        %             carrierPosition = BitAllocSum{i};
-        %             bitNumber = OFDMSymbolNumber * length(carrierPosition) * bitAllocSort(i);
-        %             bits_per = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir));
-        %             bitNumber_total =bitNumber_total+bitNumber;
-        %             decodedMsg_HD_per = decodedMsg_HD(c:c+bitNumber-1,1);
-        %             c = bitNumber+c;
-        %             [nErrors_HD, ber_HD] = biterr(decodedMsg_HD_per, bits_per);
-        %             BER_MC=ber_HD;
-        %             number_of_error=nErrors_HD;
-        %             number_of_error_total = number_of_error_total+nErrors_HD;
-        %         end
-        %     end
-        %     BER_MC =number_of_error_total/bitNumber_total;
-        % %  // ======================================================================
 
         % iteration
         for iter = 1:iterationT

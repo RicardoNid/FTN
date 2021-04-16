@@ -83,8 +83,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     demodulatedMsg_HD = codedMsg(:);
     %% Use the Viterbi decoder in hard decision mode
     decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard'); %该参数需要返回iteration,不断迭代更新
-    bits = randint(1, bitNumber, 2, OFDMParameters.Seed(cir));
-    bits = bits.'; %这里转置是为了注释掉的部分，算误码率，如果只是FPGA，不需要转置，只知道bits的长度就可以了
+    bits = ones(bitNumber, 1);
     decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
     % (20) // ======================================================================
     %    计算误码率

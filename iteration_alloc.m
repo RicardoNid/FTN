@@ -13,9 +13,9 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
-
     convCodedMsg = Convenc(decodedMsg_HD);
     interleavedMsg = Interleave(convCodedMsg);
+    global bitNumber
 
     %% mapping
     load('./data/bitAllocSort.mat');
@@ -151,7 +151,6 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     demodulatedMsg_HD = interleavedMsg(:);
     %% viterbi decoder
     % Use the Viterbi decoder in hard decision mode(recvbits)
-    file = ['./data/bits' num2str(cir) '.mat'];
-    bits = cell2mat(struct2cell(load(file)));
+    bits = ones(bitNumber, 1);
     decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
     decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
