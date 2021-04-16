@@ -15,7 +15,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     preambleNumber = OFDMParameters.PreambleNumber;
-    bitNumber = OFDMParameters.bitNumber;
     SToPcol = OFDMParameters.SToPcol;
     FFTSize = OFDMParameters.FFTSize;
     global tblen
@@ -93,16 +92,8 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         end
 
-        % de-interleaving
-        depth = 32;
-        len = length(demodulated_HD) / depth;
-        codeMsg = [];
-
-        for k = 1:depth
-            codeMsg = [codeMsg; demodulated_HD(len * (k - 1) + 1:len * k)];
-        end
-
-        demodulatedMsg_HD = codeMsg(:);
+        deinterleavedMsg = Deinterleave(demodulated_HD);
+        demodulatedMsg_HD = deinterleavedMsg(:);
 
         decodedMsg_HD = Vitdec(demodulatedMsg_HD);
 
@@ -135,38 +126,12 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         demodulatedMsg_HD = demodulate(demodObj, recoveredSymbols);
         demodulatedMsg_HD = demodulatedMsg_HD';
 
-        % de-interleaving
-        depth = 32;
-        len = length(demodulatedMsg_HD) / depth;
-        codeMsg = [];
-
-        for k = 1:depth
-            codeMsg = [codeMsg; demodulatedMsg_HD(len * (k - 1) + 1:len * k)];
-        end
-
-        demodulatedMsg_HD = codeMsg(:);
-
-        % viterbi decoder
-        % Use the Viterbi decoder in hard decision mode
+        deinterleavedMsg = Deinterleave(demodulatedMsg_HD);
+        demodulatedMsg_HD = deinterleavedMsg(:);
         decodedMsg_HD = Vitdec(demodulatedMsg_HD);
         %iteration
         for i = 1:iterationT
-            % (12) // =====================带有误码率的输出=====================================
-            %         [pre_code_errors,pre_code_ber,BER_MC_HD,decodedMsg_HD,number_of_error_HD]= iteration(decodedMsg_HD,OFDMParameters ,tblen,i,recoveredSymbols_FDE, cir);
-            %  // =====================不带误码率的输出=====================================
             decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir);
         end
 
-        %  // ======================================================================
-        % (13) 带有迭代后的误码率的输出
-        %     BER_MC = BER_MC_HD;
-        %     BER_pre = pre_code_ber;
-        %     number_of_error = number_of_error_HD;
-        %
-        %     %因为on=1的时候，需要输出这几个变量，所以on=0的时候，也要添加这几个输出,为了计算on=1时的星座图和不同调制格式的误码率
-        %     QAM_re_sum=0;
-        %     PerQAMError=0;
-        %     PerQAMtotal=0;
-        %  // ======================================================================
-        %%
     end

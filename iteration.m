@@ -22,16 +22,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     % Code properties
     codedMsg = Convenc(decodedMsg_HD);
 
-    %% interleaving
-    depth = 32;
-    codedMsg = reshape(codedMsg, depth, []);
-    codeMsg = [];
-
-    for k = 1:depth
-        codeMsg = [codeMsg, codedMsg(k, :)];
-    end
-
-    codeMsg = codeMsg.';
+    codeMsg = Interleave(codedMsg);
 
     %% mapping
     M = 2^BitsPerSymbolQAM;
@@ -67,13 +58,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     demodulatedMsg_HD = demodulate(demodObj, recoveredSymbols);
     demodulatedMsg_HD = demodulatedMsg_HD';
 
-    depth = 32;
-    len = length(demodulatedMsg_HD) / depth;
-    codedMsg = [];
-
-    for k = 1:depth
-        codedMsg = [codedMsg; demodulatedMsg_HD(len * (k - 1) + 1:len * k)];
-    end
+    codedMsg = Deinterleave(demodulatedMsg_HD);
 
     demodulatedMsg_HD = codedMsg(:);
     %% Use the Viterbi decoder in hard decision mode

@@ -1,9 +1,9 @@
 function [interleavedBits] = Interleave(bits)
-    depth = 32;
-    bits = reshape(bits, depth, []);
+    global InterleaverDepth
+    bits = reshape(bits, InterleaverDepth, []);
     interleavedBits = [];
 
-    for k = 1:depth
+    for k = 1:InterleaverDepth
         interleavedBits = [interleavedBits, bits(k, :)];
     end
 

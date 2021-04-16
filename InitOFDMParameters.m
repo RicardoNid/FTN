@@ -56,3 +56,7 @@ function OFDMParameters = InitOFDMParameters()
 
     global tblen
     tblen = 90;
+
+    %% 交织参数
+    global InterleaverDepth
+    InterleaverDepth = 32;

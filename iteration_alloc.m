@@ -13,6 +13,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
+
     convCodedMsg = Convenc(decodedMsg_HD);
     interleavedMsg = Interleave(convCodedMsg);
     global bitNumber
@@ -137,13 +138,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
 
     end
 
-    depth = 32;
-    len = length(demodulated_HD) / depth;
-    interleavedMsg = [];
+    deinterleavedMsg = Deinterleave(demodulated_HD);
 
-    for k = 1:depth
-        interleavedMsg = [interleavedMsg; demodulated_HD(len * (k - 1) + 1:len * k)];
-    end
-
-    demodulatedMsg_HD = interleavedMsg(:);
+    demodulatedMsg_HD = deinterleavedMsg(:);
     decodedMsg_HD = Vitdec(demodulatedMsg_HD);
