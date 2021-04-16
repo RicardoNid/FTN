@@ -20,16 +20,11 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     global tblen
     global RmsAlloc
 
-    %% FDE
+    %% 估计信道和FFT
     preamble = recvOFDMFrame(1:preambleNumber * (FFTSize + CPLength));
     H = ChannelEstimationByPreamble(preamble, OFDMParameters);
     tap = 20;
     H = smooth(H, tap);
-    % (6) // ======================================================================
-    %    估计出的信道
-    % figure;
-    % plot(20*log10(abs(H)));
-    %  // ======================================================================
     recvOFDMSignal = recvOFDMFrame(preambleNumber * (FFTSize + CPLength) + 1:end);
     recovered = RecoverOFDMSymbolsWithPilot(recvOFDMSignal, OFDMParameters, H);
 
