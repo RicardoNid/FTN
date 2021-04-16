@@ -1,13 +1,3 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: on=1,比特加载时的迭代
-%  // ======================================================================
-
-% (14) // =====================带有误码率的输出=====================================
-% function [PerQAMtotal,PerQAMError,QAM_re_sum,pre_code_errors,decodedMsg_HD,number_of_error_HD]=iteration_alloc(decodedMsg_HD,OFDMParameters,tblen,iter,RXSymbols, cir)
-%  // =====================不带误码率的输出=====================================
 function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, RXSymbols, cir)
     FFTSize = OFDMParameters.FFTSize;
     OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
@@ -16,7 +6,6 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
 
     convCodedMsg = Convenc(decodedMsg_HD);
     interleavedMsg = Interleave(convCodedMsg);
-    global bitNumber
 
     %% mapping
     load('./data/bitAllocSort.mat');
@@ -30,8 +19,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     for i = 1:length(bitAllocSort)
 
         if bitAllocSort(i) == 0
-            QAMSymbols = 0;
-            rmsAlloc = [0];
+            rmsAlloc = 0;
         else
             % mapping（自带的qammod)
             if bitAllocSort(i) ~= 0

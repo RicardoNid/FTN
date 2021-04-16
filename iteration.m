@@ -1,13 +1,3 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: 计算错误分布
-%  // ======================================================================
-
-% (18) // =====================带有误码率的输出=====================================
-% function [pre_code_errors,pre_code_ber,BER_MC_HD,decodedMsg_HD,number_of_error_HD]=iteration(decodedMsg_HD,OFDMParameters, tblen,i,recoveredSymbols_FDE, cir)
-%  // =====================不带误码率的输出=====================================
 function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir)
     FFTSize = OFDMParameters.FFTSize;
     BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
@@ -15,13 +5,10 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     OFDMPositions = OFDMParameters.OFDMPositions;
     SubcarriersNum = length(OFDMParameters.DataCarrierPositions);
-    bitNumber = OFDMParameters.bitNumber;
     iterationT = OFDMParameters.iteration;
     SToPcol = OFDMParameters.SToPcol;
-    %% channel coding
-    % Code properties
-    codedMsg = Convenc(decodedMsg_HD);
 
+    codedMsg = Convenc(decodedMsg_HD);
     codeMsg = Interleave(codedMsg);
 
     %% mapping
@@ -63,19 +50,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     demodulatedMsg_HD = codedMsg(:);
     %% Use the Viterbi decoder in hard decision mode
     decodedMsg_HD = Vitdec(demodulatedMsg_HD);
-    % (20) // ======================================================================
-    %    计算误码率
-    % % output
-    % [nErrors_HD, ber_HD] = biterr(decodedMsg_HD, bits);
-    % BER_MC_HD=ber_HD;
-    % number_of_error_HD = nErrors_HD;
-    % RecoveredSymbols = recoveredSymbols(:);
-    % if cir == 20
-    % scatterplot(RecoveredSymbols)
-    % title([num2str(i),'iteration','BER-MC = ', num2str(BER_MC_HD)])
-    % end
-    %  // ======================================================================
-    %% Calculate the optimal bit allocation
+
     if cir == 20
 
         if i == iterationT
@@ -130,6 +105,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
             power_alloc = power_alloc';
 
             [bitAllocSort, BitAllocSum] = bits_alloc_position_sum(bits_alloc', SubcarriersNum);
+            save './data/bitAlloc' bits_alloc
             save './data/bitAllocSort' bitAllocSort;
             save './data/BitAllocSum' BitAllocSum;
             save './data/power_alloc' power_alloc;

@@ -18,10 +18,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     SToPcol = OFDMParameters.SToPcol;
     FFTSize = OFDMParameters.FFTSize;
     global tblen
-    % (5) // ======================================================================
-    % 计算BER时，产生sendbits的时候需要
-    % OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
-    %  // ======================================================================
+
     %% FDE
     preamble = recvOFDMFrame(1:preambleNumber * (FFTSize + CPLength));
     H = ChannelEstimationByPreamble(preamble, OFDMParameters);
@@ -33,7 +30,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     % plot(20*log10(abs(H)));
     %  // ======================================================================
     recvOFDMSignal = recvOFDMFrame(preambleNumber * (FFTSize + CPLength) + 1:end);
-    [recovered, recvOFDMSignal] = RecoverOFDMSymbolsWithPilot(recvOFDMSignal, OFDMParameters, H);
+    recovered = RecoverOFDMSymbolsWithPilot(recvOFDMSignal, OFDMParameters, H);
 
     % 除对应功率
     if on == 1
@@ -53,11 +50,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         load('./data/BitAllocSum.mat');
         file = ['./data/rmsAlloc' num2str(cir) '.mat'];
         rmsAlloc = cell2mat(struct2cell(load(file)));
-        % (7) // ======================================================================
-        %     计算误码率时需要
-        %     bitNumber_total =0;
-        %     number_of_error_total = 0;
-        %  // ======================================================================
         demodulated_HD = [];
 
         for i = 1:length(bitAllocSort)

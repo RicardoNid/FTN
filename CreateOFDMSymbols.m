@@ -12,22 +12,21 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
 
-    global Seed
-    global PreambleSeed
+    %% Random BitGen
+    bits = BitGen(cir);
+    bitsPerFrame = bits;
+
+    convCodedMsg = Convenc(bits);
+    interleavedMsg = Interleave(convCodedMsg);
 
     if on == 1
         %% bit loading %%
+        load('./data/bitAlloc.mat')
         load('./data/bitAllocSort.mat');
         load('./data/BitAllocSum.mat');
         load('./data/power_alloc.mat');
         rmsAlloc = [];
         ifftBlock = zeros(FFTSize, SToPcol);
-
-        bits = BitGen(Seed(cir));
-        bitsPerFrame = bits;
-
-        convCodedMsg = Convenc(bits);
-        interleavedMsg = Interleave(convCodedMsg);
 
         % Qammod 比特分配后,面向不同的子载波,有不同的M
         b = 1;
@@ -38,21 +37,12 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
                 QAMSymbols = 0;
                 rmsAlloc = 0;
             else
-                M = 2^bitAllocSort(i);
-                modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
+
                 codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
                 codeMsg1_perloading = interleavedMsg(b:b + codeMsg1_per - 1, 1);
                 b = codeMsg1_per + b;
 
-                if bitAllocSort(i) == 3 % QAM8
-                    QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)];
-                    qam8bit = reshape(codeMsg1_perloading, bitAllocSort(i), [])';
-                    qam8dec = bi2de(qam8bit, 'left-msb');
-                    QAMSymbols = QAM8(qam8dec + 1);
-                    QAMSymbols = QAMSymbols';
-                else
-                    QAMSymbols = modulate(modObj, codeMsg1_perloading);
-                end
+                QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
 
                 rms_alloc = rms(QAMSymbols);
                 rmsAlloc = [rmsAlloc; rms_alloc];
@@ -65,6 +55,8 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
             ifftBlock(carrierPosition, :) = QAMSymbols;
         end
 
+        % for i = 1:length(bitAlloc)
+
         %OFDMFrameReceiver是需要除相应的rms的，所以这个需要存起来
         file = ['./data/rmsAlloc' num2str(cir) '.mat'];
         save(file, 'rmsAlloc');
@@ -76,15 +68,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
         %%
     else
-        bits = BitGen(PreambleSeed);
-        bitsPerFrame = bits;
-        convCodedMsg = Convenc(bits);
-        interleavedMsg = Interleave(convCodedMsg);
-
-        % mapping（自带的qammod)
-        M = 2^BitsPerSymbolQAM;
-        modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
-        QAMSymbols = modulate(modObj, interleavedMsg);
+        QAMSymbols = Qammod(BitsPerSymbolQAM, interleavedMsg);
         QAMSymbols = QAMSymbols / rms(QAMSymbols);
 
         % 在iteration函数里，最后一帧最后一次迭代算比特分配的时候，需要用QAMSymbols_trans去算SNR，根据SNR应用Chow，才能得到比特功率分配

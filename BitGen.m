@@ -1,5 +1,6 @@
-function bits = BitGen(seed)
+function bits = BitGen(cir)
     global bitNumber
     global tblen
-    bits = randint(bitNumber, 1, 2, seed);
+    global Seed
+    bits = randint(bitNumber, 1, 2, Seed(cir));
     bits(length(bits) - tblen:length(bits)) = 1;
