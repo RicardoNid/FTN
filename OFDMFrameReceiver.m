@@ -37,7 +37,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
     % 除对应功率
     if on == 1
-        load('power_alloc.mat');
+        load('./data/power_alloc.mat');
 
         for i = 1:SToPcol
             recovered(DataCarrierPositions - 2, i) = recovered(DataCarrierPositions - 2, i) ./ sqrt(power_alloc');
@@ -49,9 +49,9 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
     if on == 1
         %% bit loading %%
-        load('bitAllocSort.mat');
-        load('BitAllocSum.mat');
-        file = ['rmsAlloc' num2str(cir) '.mat'];
+        load('./data/bitAllocSort.mat');
+        load('./data/BitAllocSum.mat');
+        file = ['./data/rmsAlloc' num2str(cir) '.mat'];
         rmsAlloc = cell2mat(struct2cell(load(file)));
         % (7) // ======================================================================
         %     计算误码率时需要
@@ -110,7 +110,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         % viterbi decoder
         % Use the Viterbi decoder in hard decision mode(recvbits)
-        file = ['bits' num2str(cir) '.mat'];
+        file = ['./data/bits' num2str(cir) '.mat'];
         bits = cell2mat(struct2cell(load(file)));
         decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
         decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];

@@ -23,5 +23,5 @@ function OFDMFrame = OFDMBigFrameGenerator(OFDMParameters)
 
     OFDMFrame = reshape(OFDMBigFrame, [], 1);
 
-    save bitsAllFrame bitsAllFrame
+    save './data/bitsAllFrame' bitsAllFrame
 end

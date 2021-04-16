@@ -18,9 +18,9 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     interleavedMsg = Interleave(convCodedMsg);
 
     %% mapping
-    load('bitAllocSort.mat');
-    load('BitAllocSum.mat');
-    load('power_alloc.mat');
+    load('./data/bitAllocSort.mat');
+    load('./data/BitAllocSum.mat');
+    load('./data/power_alloc.mat');
     rmsAlloc = [];
     ifftBlock = zeros(FFTSize, SToPcol);
 
@@ -69,7 +69,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
 
     end
 
-    load('power_alloc.mat');
+    load('./data/power_alloc.mat');
 
     for i = 1:SToPcol
         ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
@@ -151,35 +151,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     demodulatedMsg_HD = interleavedMsg(:);
     %% viterbi decoder
     % Use the Viterbi decoder in hard decision mode(recvbits)
-    file = ['bits' num2str(cir) '.mat'];
+    file = ['./data/bits' num2str(cir) '.mat'];
     bits = cell2mat(struct2cell(load(file)));
     decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
     decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
-    %% sendbits
-    % (17)  // ======================================================================
-    %     计算迭代后的误码率
-    % c=1;
-    % for i=1:length(bitAllocSort)
-    %     if  bitAllocSort(i)~=0
-    %         carrierPosition = BitAllocSum{i};
-    %         bitNumber = OFDMSymbolNumber * length(carrierPosition) * bitAllocSort(i);
-    %         bits_per = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir));
-    %         bitNumber_total =bitNumber_total+bitNumber;
-    %         decodedMsg_HD_per = decodedMsg_HD(c:c+bitNumber-1,1);
-    %         c = bitNumber+c;
-    %         [nErrors_HD, ber_HD] = biterr(decodedMsg_HD_per, bits_per);
-    %         % 把每种调制格式的错误数放一起，以及对应的比特总数
-    %         PerQAMError(1,i) = nErrors_HD;
-    %         PerQAMtotal(1,i) = length(bits_per);
-    %
-    %         if iter == iteration
-    %             load('QAM_re_sum.mat');
-    %             %   scatterplot(QAM_re_sum{i});
-    %             %   title(['BER-MC = ', num2str(ber_HD)  '---NE= ', num2str(nErrors_HD) '---iteration', num2str(iter)]);
-    %         end
-    %         number_of_error_total = number_of_error_total+nErrors_HD;
-    %     end
-    % end
-    % BER_MC_HD =number_of_error_total/bitNumber_total;
-    % number_of_error_HD = number_of_error_total;
-    %  // ======================================================================

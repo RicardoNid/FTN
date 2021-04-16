@@ -41,11 +41,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
 
     %% 结构简单，算ICI
-    %% 保存S'HD
     S_HD = reshape(QAMSymbols, [], 1);
-    save S_HD S_HD
-    file = ['./data/S_HD.mat'];
-    save(file, 'S_HD')
     %% IFFT(重复发端操作）zero padding
     ifftBlock = zeros(FFTSize, SToPcol);
     ifftBlock(DataCarrierPositions, :) = QAMSymbols;
@@ -76,14 +72,6 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     demodulatedMsg_HD = demodulate(demodObj, recoveredSymbols);
     demodulatedMsg_HD = demodulatedMsg_HD';
 
-    % (19) // ======================================================================
-    %     load在CreateOFDMSymbols函数里on=0时保存的codeMsg,算每次迭代后的纠前误码率
-    % file = [ 'codeMsg' num2str(cir) '.mat'];
-    % codedMsg = cell2mat(struct2cell(load(file)));
-    % [pre_code_errors, pre_code_ber] = biterr(demodulatedMsg_HD', codedMsg);
-    %  // ======================================================================
-
-    %% de-interleaving
     depth = 32;
     len = length(demodulatedMsg_HD) / depth;
     codedMsg = [];
@@ -114,7 +102,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     if cir == 20
 
         if i == iterationT
-            file = ['QAMSymbols_trans' num2str(cir) '.mat']; %QAMSymbols_trans由CreateOFDMSymbols函数on=0时保存，用来算每个子载波的SNR
+            file = ['./data/QAMSymbols_trans' num2str(cir) '.mat']; %QAMSymbols_trans由CreateOFDMSymbols函数on=0时保存，用来算每个子载波的SNR
             QAMSymbols_trans = cell2mat(struct2cell(load(file)));
             SendSymbols = QAMSymbols_trans * sqrt(10);
             SendSymbols = reshape(SendSymbols, 1, []);
@@ -165,9 +153,9 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
             power_alloc = power_alloc';
 
             [bitAllocSort, BitAllocSum] = bits_alloc_position_sum(bits_alloc', SubcarriersNum);
-            save bitAllocSort bitAllocSort;
-            save BitAllocSum BitAllocSum;
-            save power_alloc power_alloc;
+            save './data/bitAllocSort' bitAllocSort;
+            save './data/BitAllocSum' BitAllocSum;
+            save './data/power_alloc' power_alloc;
         end
 
     end

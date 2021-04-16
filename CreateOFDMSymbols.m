@@ -15,9 +15,9 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
     if on == 1
         %% bit loading %%
-        load('bitAllocSort.mat');
-        load('BitAllocSum.mat');
-        load('power_alloc.mat');
+        load('./data/bitAllocSort.mat');
+        load('./data/BitAllocSum.mat');
+        load('./data/power_alloc.mat');
         rmsAlloc = [];
         ifftBlock = zeros(FFTSize, SToPcol);
 
@@ -25,7 +25,6 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         bitsPerFrame = bits;
         %在OFDMFrameReceiver中vitdec后需要用到这个bits
         file = ['./data/bits' num2str(cir) '.mat'];
-        file = ['bits' num2str(cir) '.mat'];
         save(file, 'bits');
 
         % Channel Coding
@@ -71,7 +70,6 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
         %OFDMFrameReceiver是需要除相应的rms的，所以这个需要存起来
         file = ['./data/rmsAlloc' num2str(cir) '.mat'];
-        file = ['rmsAlloc' num2str(cir) '.mat'];
         save(file, 'rmsAlloc');
 
         % 功率加载
@@ -96,7 +94,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         QAMSymbols = QAMSymbols / rms(QAMSymbols);
 
         % 在iteration函数里，最后一帧最后一次迭代算比特分配的时候，需要用QAMSymbols_trans去算SNR，根据SNR应用Chow，才能得到比特功率分配
-        file = ['QAMSymbols_trans' num2str(cir) '.mat'];
+        file = ['./data/QAMSymbols_trans' num2str(cir) '.mat'];
         save(file, 'QAMSymbols');
         QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
         ifftBlock = zeros(FFTSize, SToPcol);
