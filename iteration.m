@@ -44,6 +44,8 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     %% 保存S'HD
     S_HD = reshape(QAMSymbols, [], 1);
     save S_HD S_HD
+    file = ['./data/S_HD.mat'];
+    save(file, 'S_HD')
     %% IFFT(重复发端操作）zero padding
     ifftBlock = zeros(FFTSize, SToPcol);
     ifftBlock(DataCarrierPositions, :) = QAMSymbols;

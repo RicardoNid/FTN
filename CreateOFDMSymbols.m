@@ -7,8 +7,6 @@
 function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     on = OFDMParameters.on;
     FFTSize = OFDMParameters.FFTSize;
-    OFDMPositions = OFDMParameters.OFDMPositions;
-    CPLength = OFDMParameters.CPLength;
     OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
     BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
@@ -21,19 +19,12 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         load('BitAllocSum.mat');
         load('power_alloc.mat');
         rmsAlloc = [];
-        bits = [];
         ifftBlock = zeros(FFTSize, SToPcol);
 
         bits = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir));
-        % for i = 1:length(bitAllocSort)
-        %     carrierPosition = BitAllocSum{i};
-        %     bitNumber = OFDMSymbolNumber * length(carrierPosition) * bitAllocSort(i);
-        %     bits_per = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir));
-        %     bits = [bits; bits_per];
-        % end
-
         bitsPerFrame = bits;
         %在OFDMFrameReceiver中vitdec后需要用到这个bits
+        file = ['./data/bits' num2str(cir) '.mat'];
         file = ['bits' num2str(cir) '.mat'];
         save(file, 'bits');
 
@@ -79,6 +70,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         end
 
         %OFDMFrameReceiver是需要除相应的rms的，所以这个需要存起来
+        file = ['./data/rmsAlloc' num2str(cir) '.mat'];
         file = ['rmsAlloc' num2str(cir) '.mat'];
         save(file, 'rmsAlloc');
 
@@ -89,7 +81,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
         %%
     else
-        %% cal %%
+        % Random bitgen
         bits = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir)); %每个cir对应的种子数不一样，因为子帧数据要求不一样
         bitsPerFrame = bits;
         % Code properties(channel coding)

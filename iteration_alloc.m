@@ -140,15 +140,6 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
 
     end
 
-    % (16) // ======================================================================
-    %     load在CreateOFDMSymbols函数里on=1时保存的codeMsg,算每次迭代后的纠前误码率
-    %     file = [ 'interleavedMsg' num2str(cir) '.mat'];
-    %     interleavedMsg = cell2mat(struct2cell(load(file)));
-    %     [pre_code_errors, pre_code_ber] = biterr(demodulated_HD', interleavedMsg);
-    % % 为了画最后的总体的星座图
-    %      save QAM_re_sum QAM_re_sum;
-    %  // ======================================================================
-    %% de-interleaving
     depth = 32;
     len = length(demodulated_HD) / depth;
     interleavedMsg = [];
