@@ -13,6 +13,8 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     bitNumber = OFDMParameters.bitNumber;
     SToPcol = OFDMParameters.SToPcol;
 
+    tblen = 90;
+
     if on == 1
         %% bit loading %%
         load('./data/bitAllocSort.mat');
@@ -22,6 +24,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         ifftBlock = zeros(FFTSize, SToPcol);
 
         bits = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir));
+        bits(length(bits) - tblen:length(bits)) = 1;
         bitsPerFrame = bits;
         %在OFDMFrameReceiver中vitdec后需要用到这个bits
         file = ['./data/bits' num2str(cir) '.mat'];
@@ -81,6 +84,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     else
         % Random bitgen
         bits = randint(bitNumber, 1, 2, OFDMParameters.Seed(cir)); %每个cir对应的种子数不一样，因为子帧数据要求不一样
+        bits(length(bits) - tblen:length(bits)) = 1;
         bitsPerFrame = bits;
         % Code properties(channel coding)
         convCodedMsg = Convenc(bits);

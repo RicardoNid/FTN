@@ -110,10 +110,10 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         % viterbi decoder
         % Use the Viterbi decoder in hard decision mode(recvbits)
-        file = ['./data/bits' num2str(cir) '.mat'];
-        bits = cell2mat(struct2cell(load(file)));
+        bits = ones(bitNumber, 1);
         decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
         decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
+        % decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); padding];
 
         % (8) // ======================================================================
         %     计算迭代前的误码率
@@ -183,8 +183,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         % viterbi decoder
         % Use the Viterbi decoder in hard decision mode
         decodedMsg_HD = vitdec(demodulatedMsg_HD, trellis, tblen, 'cont', 'hard');
-        bits = randint(1, bitNumber, 2, OFDMParameters.Seed(cir));
-        bits = bits.'; %这里转置是为了注释掉的部分，算误码率，如果只是FPGA，不需要转置，只知道bits的长度就可以了
+        bits = ones(bitNumber, 1);
         decodedMsg_HD = [decodedMsg_HD(tblen + 1:end); bits(length(bits) - tblen + 1:length(bits))];
         % (11) // ======================================================================
         %    计算迭代前的误码率
