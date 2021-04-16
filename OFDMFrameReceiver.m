@@ -18,6 +18,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     SToPcol = OFDMParameters.SToPcol;
     FFTSize = OFDMParameters.FFTSize;
     global tblen
+    global RmsAlloc
 
     %% FDE
     preamble = recvOFDMFrame(1:preambleNumber * (FFTSize + CPLength));
@@ -48,8 +49,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         %% bit loading %%
         load('./data/bitAllocSort.mat');
         load('./data/BitAllocSum.mat');
-        file = ['./data/rmsAlloc' num2str(cir) '.mat'];
-        rmsAlloc = cell2mat(struct2cell(load(file)));
         demodulated_HD = [];
 
         for i = 1:length(bitAllocSort)
@@ -57,7 +56,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
             if bitAllocSort(i) ~= 0
                 carrierPosition = BitAllocSum{i};
                 QAM = reshape(recovered(carrierPosition, :), [], 1);
-                QAM_re = QAM / rms(QAM) * rmsAlloc(i);
+                QAM_re = QAM / rms(QAM) * RmsAlloc(bitAllocSort(i));
                 % de-mapping
                 M = 2^bitAllocSort(i);
 

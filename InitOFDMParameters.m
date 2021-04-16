@@ -7,10 +7,18 @@ function OFDMParameters = InitOFDMParameters()
     global CPLength; CPLength = 20;
     global PreambleNumber; PreambleNumber = 2;
     global FFTSize; FFTSize = 512;
+
+    %% 卷积编码-维特比译码参数
+    global ConvConstLen; ConvConstLen = 7;
+    global ConvCodeGen; ConvCodeGen = [171, 133];
+    global tblen; tblen = 90;
+    global ConvCodeRate; ConvCodeRate = 1/2;
+
     % Symbol
     global OFDMSymbolNumber; OFDMSymbolNumber = 8;
     global BitsPerSymbolQAM; BitsPerSymbolQAM = 4;
     global PreambleBitsPerSymbolQAM; PreambleBitsPerSymbolQAM = 4;
+    global SToPcol; SToPcol = OFDMSymbolNumber / ConvCodeRate;
     % 子载波
     global DataCarrierPositions; DataCarrierPositions = 3:226;
     global PreambleCarrierPositions; PreambleCarrierPositions = 2:FFTSize / 2;
@@ -23,12 +31,10 @@ function OFDMParameters = InitOFDMParameters()
     global Seed; Seed = [10, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
     global PreambleSeed; PreambleSeed = 20;
 
-    %% 卷积编码-维特比译码参数
-    global ConvConstLen; ConvConstLen = 7;
-    global ConvCodeGen; ConvCodeGen = [171, 133];
-    global tblen; tblen = 90;
     %% 交织参数
     global InterleaverDepth; InterleaverDepth = 32;
+
+    global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
     % on=0算比特分配，on=1比特加载
     OFDMParameters.on = 0;

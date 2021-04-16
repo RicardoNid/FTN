@@ -3,6 +3,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
+    global RmsAlloc
 
     convCodedMsg = Convenc(decodedMsg_HD);
     interleavedMsg = Interleave(convCodedMsg);
@@ -11,7 +12,6 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     load('./data/bitAllocSort.mat');
     load('./data/BitAllocSum.mat');
     load('./data/power_alloc.mat');
-    rmsAlloc = [];
     ifftBlock = zeros(FFTSize, SToPcol);
 
     b = 1;
@@ -19,33 +19,19 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     for i = 1:length(bitAllocSort)
 
         if bitAllocSort(i) == 0
-            rmsAlloc = 0;
         else
             % mapping（自带的qammod)
             if bitAllocSort(i) ~= 0
-                M = 2^bitAllocSort(i);
-                modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
                 codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
                 codeMsg1_perloading = interleavedMsg(b:b + codeMsg1_per - 1, 1);
                 b = codeMsg1_per + b;
 
-                if bitAllocSort(i) == 3 % QAM8
-                    QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)];
-                    qam8bit = reshape(codeMsg1_perloading, bitAllocSort(i), [])';
-                    qam8dec = bi2de(qam8bit, 'left-msb');
-                    QAMSymbols = QAM8(qam8dec + 1);
-                    QAMSymbols = QAMSymbols';
-                else
-                    QAMSymbols = modulate(modObj, codeMsg1_perloading);
-                end
-
-                rms_alloc = rms(QAMSymbols);
-                rmsAlloc = [rmsAlloc; rms_alloc];
+                QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
 
                 if bitAllocSort(i) == 0
                     QAMSymbols = 0;
                 else
-                    QAMSymbols = QAMSymbols / rms_alloc;
+                    QAMSymbols = QAMSymbols / RmsAlloc(bitAllocSort(i));
                     QAMSymbols = reshape(QAMSymbols, length(BitAllocSum{i}), SToPcol);
                 end
 
@@ -91,7 +77,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
         if bitAllocSort(i) ~= 0
             carrierPosition = BitAllocSum{i};
             QAM = reshape(dataQAMSymbols(carrierPosition, :), [], 1);
-            QAM_re = QAM / rms(QAM) * rmsAlloc(i);
+            QAM_re = QAM / rms(QAM) * RmsAlloc(bitAllocSort(i));
             % (15) // ======================================================================
             % 为了画最后的总体的星座图
             %         QAM_re_sum{i}= QAM_re;

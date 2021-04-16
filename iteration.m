@@ -105,7 +105,8 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
             power_alloc = power_alloc';
 
             [bitAllocSort, BitAllocSum] = bits_alloc_position_sum(bits_alloc', SubcarriersNum);
-            save './data/bitAlloc' bits_alloc
+            bitAlloc = bits_alloc;
+            save './data/bitAlloc' bitAlloc
             save './data/bitAllocSort' bitAllocSort;
             save './data/BitAllocSum' BitAllocSum;
             save './data/power_alloc' power_alloc;

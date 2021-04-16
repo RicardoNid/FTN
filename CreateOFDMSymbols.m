@@ -11,6 +11,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
+    global RmsAlloc
 
     %% Random BitGen
     bits = BitGen(cir);
@@ -19,64 +20,54 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     convCodedMsg = Convenc(bits);
     interleavedMsg = Interleave(convCodedMsg);
 
-    if on == 1
-        %% bit loading %%
-        load('./data/bitAlloc.mat')
-        load('./data/bitAllocSort.mat');
-        load('./data/BitAllocSum.mat');
-        load('./data/power_alloc.mat');
-        rmsAlloc = [];
-        ifftBlock = zeros(FFTSize, SToPcol);
+    % if on == 1
+    %     %% bit loading %%
+    %     load('./data/bitAlloc.mat')
+    %     load('./data/bitAllocSort.mat');
+    %     load('./data/BitAllocSum.mat');
+    %     load('./data/power_alloc.mat');
+    %     ifftBlock = zeros(FFTSize, SToPcol);
 
-        % Qammod 比特分配后,面向不同的子载波,有不同的M
-        b = 1;
+    %     % Qammod 比特分配后,面向不同的子载波,有不同的M
+    %     b = 1;
 
-        for i = 1:length(bitAllocSort)
+    %     for i = 1:length(bitAllocSort)
 
-            if bitAllocSort(i) == 0
-                QAMSymbols = 0;
-                rmsAlloc = 0;
-            else
+    %         if bitAllocSort(i) == 0
+    %             QAMSymbols = 0;
+    %         else
+    %             codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
+    %             codeMsg1_perloading = interleavedMsg(b:b + codeMsg1_per - 1, 1);
+    %             b = codeMsg1_per + b;
+    %             QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
+    %             QAMSymbols = QAMSymbols / RmsAlloc(bitAllocSort(i));
+    %             QAMSymbols = reshape(QAMSymbols, length(BitAllocSum{i}), SToPcol);
+    %         end
 
-                codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
-                codeMsg1_perloading = interleavedMsg(b:b + codeMsg1_per - 1, 1);
-                b = codeMsg1_per + b;
+    %         carrierPosition = BitAllocSum{i};
+    %         carrierPosition = carrierPosition + 2;
+    %         ifftBlock(carrierPosition, :) = QAMSymbols;
+    %     end
 
-                QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
+    %     % 功率加载
+    %     for i = 1:SToPcol
+    %         ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
+    %     end
 
-                rms_alloc = rms(QAMSymbols);
-                rmsAlloc = [rmsAlloc; rms_alloc];
-                QAMSymbols = QAMSymbols / rms_alloc;
-                QAMSymbols = reshape(QAMSymbols, length(BitAllocSum{i}), SToPcol);
-            end
+    % else
+    %     QAMSymbols = Qammod(BitsPerSymbolQAM, interleavedMsg);
+    %     QAMSymbols = QAMSymbols / rms(QAMSymbols);
 
-            carrierPosition = BitAllocSum{i};
-            carrierPosition = carrierPosition + 2;
-            ifftBlock(carrierPosition, :) = QAMSymbols;
-        end
+    %     % 实际训练(on = 0)时,整个训练帧都是已知的,因此文件传递是合法的
+    %     file = ['./data/QAMSymbols_trans' num2str(cir) '.mat'];
+    %     save(file, 'QAMSymbols');
+    %     QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
+    %     ifftBlock = zeros(FFTSize, SToPcol);
+    %     ifftBlock(DataCarrierPositions, :) = QAMSymbols;
+    % end
 
-        % for i = 1:length(bitAlloc)
-
-        %OFDMFrameReceiver是需要除相应的rms的，所以这个需要存起来
-        file = ['./data/rmsAlloc' num2str(cir) '.mat'];
-        save(file, 'rmsAlloc');
-
-        % 功率加载
-        for i = 1:SToPcol
-            ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
-        end
-
-        %%
-    else
-        QAMSymbols = Qammod(BitsPerSymbolQAM, interleavedMsg);
-        QAMSymbols = QAMSymbols / rms(QAMSymbols);
-
-        % 在iteration函数里，最后一帧最后一次迭代算比特分配的时候，需要用QAMSymbols_trans去算SNR，根据SNR应用Chow，才能得到比特功率分配
-        file = ['./data/QAMSymbols_trans' num2str(cir) '.mat'];
-        save(file, 'QAMSymbols');
-        QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
-        ifftBlock = zeros(FFTSize, SToPcol);
-        ifftBlock(DataCarrierPositions, :) = QAMSymbols;
-    end
+    DataForCarriers = DynamicQammod(interleavedMsg, on);
+    ifftBlock = zeros(FFTSize, SToPcol);
+    ifftBlock(DataCarrierPositions, :) = DataForCarriers;
 
     OFDMSymbols = IFFT(ifftBlock);
