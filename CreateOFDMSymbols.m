@@ -26,9 +26,7 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         bits = BitGen(Seed(cir));
         bitsPerFrame = bits;
 
-        % Channel Coding
         convCodedMsg = Convenc(bits);
-        % Interleaving
         interleavedMsg = Interleave(convCodedMsg);
 
         % Qammod 比特分配后,面向不同的子载波,有不同的M
@@ -78,12 +76,9 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
         %%
     else
-        % Random bitgen
         bits = BitGen(PreambleSeed);
         bitsPerFrame = bits;
-        % Code properties(channel coding)
         convCodedMsg = Convenc(bits);
-        % Interleaving
         interleavedMsg = Interleave(convCodedMsg);
 
         % mapping（自带的qammod)

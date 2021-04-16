@@ -96,8 +96,6 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     end
 
     %% receiver
-    bitNumber_total = 0;
-    number_of_error_total = 0;
     demodulated_HD = [];
 
     for i = 1:length(bitAllocSort)
