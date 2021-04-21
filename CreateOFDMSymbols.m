@@ -28,7 +28,6 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
         load('./data/power_alloc.mat');
         ifftBlock = zeros(FFTSize, SToPcol);
 
-        % Qammod 比特分配后,面向不同的子载波,有不同的M
         b = 1;
 
         for i = 1:length(bitAllocSort)
