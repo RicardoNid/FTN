@@ -8,6 +8,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     iterationT = OFDMParameters.iteration;
     SToPcol = OFDMParameters.SToPcol;
 
+    % ÖØ¸´·¢Éä»ú
     codedMsg = Convenc(decodedMsg_HD);
     codeMsg = Interleave(codedMsg);
 

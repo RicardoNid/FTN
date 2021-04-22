@@ -1,4 +1,4 @@
-function ifftBlock = DynamicQammod(bits, cir)
+function QAMSymbols = DynamicQammod(bits, cir)
     global On
     global FFTSize
     global SToPcol
@@ -6,6 +6,7 @@ function ifftBlock = DynamicQammod(bits, cir)
     global BitsPerSymbolQAM
     global OFDMSymbolNumber
     global RmsAlloc
+    global SubcarriersNum
 
     ifftBlock = zeros(FFTSize, SToPcol);
 
@@ -14,32 +15,37 @@ function ifftBlock = DynamicQammod(bits, cir)
         load('./data/bitAlloc.mat')
         load('./data/bitAllocSort.mat');
         load('./data/BitAllocSum.mat');
-        load('./data/power_alloc.mat');
+
+        QAMSymbols = zeros(SubcarriersNum, SToPcol);
 
         b = 1;
 
         for i = 1:length(bitAllocSort)
 
             if bitAllocSort(i) == 0
-                QAMSymbols = 0;
+                QAMSymbol = 0;
             else
                 codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
                 codeMsg1_perloading = bits(b:b + codeMsg1_per - 1, 1);
                 b = codeMsg1_per + b;
-                QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
-                QAMSymbols = QAMSymbols / RmsAlloc(bitAllocSort(i));
-                QAMSymbols = reshape(QAMSymbols, length(BitAllocSum{i}), SToPcol);
+                QAMSymbol = Qammod(bitAllocSort(i), codeMsg1_perloading);
+                QAMSymbol = QAMSymbol / RmsAlloc(bitAllocSort(i));
+                QAMSymbol = reshape(QAMSymbol, length(BitAllocSum{i}), SToPcol);
             end
 
             carrierPosition = BitAllocSum{i};
-            carrierPosition = carrierPosition + 2;
-            ifftBlock(carrierPosition, :) = QAMSymbols;
+            % carrierPosition = carrierPosition + 2;
+            % ifftBlock(carrierPosition, :) = QAMSymbol;
+            QAMSymbols(carrierPosition, :) = QAMSymbol;
+
         end
 
-        % 功率加载
-        for i = 1:SToPcol
-            ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
-        end
+        ifftBlock(DataCarrierPositions, :) = QAMSymbols;
+
+        % % 功率加载
+        % for i = 1:SToPcol
+        %     ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
+        % end
 
     else
         QAMSymbols = Qammod(BitsPerSymbolQAM, bits);

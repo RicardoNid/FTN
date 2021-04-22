@@ -2,6 +2,9 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
     global RmsAlloc
+    global FFTSize
+    global SToPcol
+    global DataCarrierPositions
 
     convCodedMsg = Convenc(decodedMsg_HD);
     interleavedMsg = Interleave(convCodedMsg);
@@ -11,7 +14,17 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     load('./data/BitAllocSum.mat');
     load('./data/power_alloc.mat');
 
-    ifftBlock = DynamicQammod(interleavedMsg, cir);
+    ifftBlock = zeros(FFTSize, SToPcol);
+
+    % ifftBlock = DynamicQammod(interleavedMsg, cir);
+    QAMSymbols = DynamicQammod(interleavedMsg, cir);
+    ifftBlock(DataCarrierPositions, :) = QAMSymbols;
+
+    load('./data/power_alloc.mat');
+
+    for i = 1:SToPcol
+        ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
+    end
 
     %% Ω·ππºÚµ•£¨À„ICI
     %% IFFT(zeros padding)
