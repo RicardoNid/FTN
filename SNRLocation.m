@@ -4,7 +4,7 @@
 %  //  @Last Modified time: 2021-03-05
 %  //  @description: ¼ÆËã¸÷×ÓÔØ²¨SNR
 %  // ======================================================================
-function SNR = SNRLocation(recoveredSymbols, transmittedSymbols, OFDMParameters)
+function SNR = SNRLocation(recoveredSymbols, transmittedSymbols)
     global SubcarriersNum
     %  length(OFDMParameters.DataCarrierPositions);
     recoveredSymbols = reshape(recoveredSymbols, SubcarriersNum, []);

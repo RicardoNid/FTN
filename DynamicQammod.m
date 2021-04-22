@@ -1,6 +1,5 @@
 function QAMSymbols = DynamicQammod(bits, cir)
     global On
-    global FFTSize
     global SToPcol
     global DataCarrierPositions
     global BitsPerSymbolQAM
@@ -36,7 +35,6 @@ function QAMSymbols = DynamicQammod(bits, cir)
             % carrierPosition = carrierPosition + 2;
             % ifftBlock(carrierPosition, :) = QAMSymbol;
             QAMSymbols(carrierPosition, :) = QAMSymbol;
-
         end
 
     else

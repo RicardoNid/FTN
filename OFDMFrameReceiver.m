@@ -45,21 +45,8 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         recovered = reshape(recovered, [], 1);
     end
 
-    % display(rms(recovered))
-    recoveredSymbols_FDE = recovered / rms(recovered);
-
     decodedMsg_HD = QAM2Bits(recovered);
 
-    if On == 1
-
-        for iter = 1:Iteration
-            decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, recovered, cir);
-        end
-
-    else
-
-        for i = 1:Iteration
-            decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir);
-        end
-
+    for iter = 1:Iteration
+        decodedMsg_HD = Iterating(decodedMsg_HD, OFDMParameters, tblen, i, recovered, cir);
     end

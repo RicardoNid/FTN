@@ -1,11 +1,14 @@
-function none = Alloc()
-    file = ['./data/QAMSymbols_trans' num2str(cir) '.mat']; %QAMSymbols_trans由CreateOFDMSymbols函数on=0时保存，用来算每个子载波的SNR
+function none = Alloc(recoveredSymbols)
+
+    global SubcarriersNum
+
+    file = ['./data/QAMSymbols_trans' num2str(20) '.mat']; %QAMSymbols_trans由CreateOFDMSymbols函数on=0时保存，用来算每个子载波的SNR
     QAMSymbols_trans = cell2mat(struct2cell(load(file)));
     SendSymbols = QAMSymbols_trans * sqrt(10);
     SendSymbols = reshape(SendSymbols, 1, []);
     recoveredQAMSymbols = reshape(recoveredSymbols, 1, []);
 
-    SNR = SNRLocation(recoveredQAMSymbols, SendSymbols, OFDMParameters);
+    SNR = SNRLocation(recoveredQAMSymbols, SendSymbols);
     %         title([num2str(i),'iteration','SNRPersubcarrier '])
 
     BER = 1e-3; %误码率
