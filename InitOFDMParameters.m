@@ -12,8 +12,9 @@ function OFDMParameters = InitOFDMParameters()
     global FFTSize; FFTSize = 512;
 
     %% 卷积编码-维特比译码参数
-    global ConvConstLen; ConvConstLen = 7;
-    global ConvCodeGen; ConvCodeGen = [171, 133];
+    ConvConstLen = 7;
+    ConvCodeGen = [171, 133];
+    global trellis; trellis = poly2trellis (ConvConstLen, ConvCodeGen);
     global tblen; tblen = 90;
     global ConvCodeRate; ConvCodeRate = 1/2;
 
@@ -32,7 +33,6 @@ function OFDMParameters = InitOFDMParameters()
     global BitNumber; BitNumber = length(DataCarrierPositions) * OFDMSymbolNumber * BitsPerSymbolQAM;
     global PreambleBitNumber; PreambleBitNumber = length(PreambleCarrierPositions) * PreambleBitsPerSymbolQAM;
     %% Seed
-    global Seed; Seed = [10, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
     global PreambleSeed; PreambleSeed = 20;
 
     %% 交织参数
@@ -42,4 +42,11 @@ function OFDMParameters = InitOFDMParameters()
     global QAM8; QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)];
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
+    %% 系统整体参数
     global Iteration; Iteration = 5;
+
+    %% 测试规模参数
+    global Seed; Seed = [10, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
+    global FrameNum; FrameNum = 20;
+    % global Seed; Seed = randi(100, [1, 100]);
+    % global FrameNum; FrameNum = 100;

@@ -1,4 +1,4 @@
-function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, cir)
+function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame)
     global On
     global Iteration
     global CPLength
@@ -9,15 +9,16 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, cir)
 
     %% 估计信道和FFT
     preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength));
+    symbols = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
+
     H = ChannelEstimationByPreamble(preamble);
     tap = 20;
     H = smooth(H, tap);
-    recvOFDMSignal = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
-    recovered = FFT(recvOFDMSignal);
+    recovered = FFT(symbols);
 
     % 使用估计出的信道信息
     for i = 1:SToPcol;
-        recovered(:, i) = recovered(:, i) ./ H(DataCarrierPositions);
+        recovered(:, i) = recovered(:, i) ./ H(DataCarrierPositions + 2);
     end
 
     % 除对应功率
@@ -35,5 +36,5 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, cir)
     decodedMsg_HD = QAM2Bits(recovered);
 
     for iter = 1:Iteration
-        decodedMsg_HD = Iterating(decodedMsg_HD, iter, recovered, cir);
+        decodedMsg_HD = Iterating(decodedMsg_HD, iter, recovered);
     end

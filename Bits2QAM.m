@@ -1,5 +1,4 @@
 function QAMSymbols = Bits2QAM(bits)
-    global CurrentFrame
-    convCodedMsg = Convenc(bits);
-    interleavedMsg = Interleave(convCodedMsg);
-    QAMSymbols = DynamicQammod(interleavedMsg, CurrentFrame); %  QAM鏄犲皠
+    convCodedMsg = Convenc(bits); % 卷积编码
+    interleavedMsg = Interleave(convCodedMsg); % 交织
+    QAMSymbols = DynamicQammod(interleavedMsg); %  (动态)QAM映射

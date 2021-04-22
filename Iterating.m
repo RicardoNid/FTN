@@ -1,10 +1,11 @@
-function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE, cir)
+function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE)
     global On
     global RmsAlloc
     global SToPcol
     global DataCarrierPositions
     global Iteration
     global CurrentFrame
+    global FrameNum
 
     QAMSymbols = Bits2QAM(decodedMsg_HD);
 
@@ -28,6 +29,7 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE, cir)
         end
 
     else
+
         FDE = FDE / rms(FDE);
 
         QAMSymbols = reshape(QAMSymbols, [], 1);
@@ -48,12 +50,10 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE, cir)
 
     decodedMsg_HD = QAM2Bits(dataQAMSymbols);
 
-    if On == 0
+    if On == 0 && CurrentFrame == FrameNum && i == Iteration
         % 此处可能也是不必要的 ??
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
-        if CurrentFrame == 20 && i == Iteration
-            Alloc(dataQAMSymbols);
-        end
+        Alloc(dataQAMSymbols);
 
     end

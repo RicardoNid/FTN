@@ -2,10 +2,12 @@ function none = Alloc(recoveredSymbols)
 
     global SubcarriersNum
 
-    file = ['./data/QAMSymbols_trans' num2str(20) '.mat'];
+    file = './data/QAMSymbols_trans.mat';
     QAMSymbols_trans = cell2mat(struct2cell(load(file)));
+
     SendSymbols = QAMSymbols_trans * sqrt(10);
     SendSymbols = reshape(SendSymbols, 1, []);
+
     recoveredQAMSymbols = reshape(recoveredSymbols, 1, []);
 
     SNR = SNRLocation(recoveredQAMSymbols, SendSymbols);
@@ -52,7 +54,7 @@ function none = Alloc(recoveredSymbols)
     power_alloc = power_alloc_record;
     power_alloc = power_alloc';
 
-    [bitAllocSort, BitAllocSum] = bits_alloc_position_sum(bits_alloc', SubcarriersNum);
+    [bitAllocSort, BitAllocSum] = bits_alloc_position_sum(bits_alloc');
     bitAlloc = bits_alloc;
     save './data/bitAlloc' bitAlloc
     save './data/bitAllocSort' bitAllocSort;
