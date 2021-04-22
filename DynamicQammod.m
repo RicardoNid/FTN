@@ -1,4 +1,4 @@
-function ifftBlock = DynamicQammod(bits, on, cir)
+function ifftBlock = DynamicQammod(bits, cir)
     global On
     global FFTSize
     global SToPcol

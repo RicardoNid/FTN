@@ -10,6 +10,7 @@
 %  // =====================不带误码率的输出=====================================
 function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     on = OFDMParameters.on;
+    global On
     iterationT = OFDMParameters.iteration;
     CPLength = OFDMParameters.CPLength;
     BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
@@ -42,78 +43,25 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         end
 
     else
-        recoveredSymbols = reshape(recovered, [], 1);
+        recovered = reshape(recovered, [], 1);
     end
 
-    if on == 1
-        %% bit loading %%
-        load('./data/bitAllocSort.mat');
-        load('./data/BitAllocSum.mat');
-        demodulated_HD = [];
+    recoveredSymbols_FDE = recovered / rms(recovered) * sqrt(10);
 
-        for i = 1:length(bitAllocSort)
+    demodulatedMsg_HD = DynamicQamdemod(recovered);
 
-            if bitAllocSort(i) ~= 0
-                carrierPosition = BitAllocSum{i};
-                QAM = reshape(recovered(carrierPosition, :), [], 1);
-                QAM_re = QAM / rms(QAM) * RmsAlloc(bitAllocSort(i));
-                % de-mapping
-                M = 2^bitAllocSort(i);
+    deinterleavedMsg = Deinterleave(demodulatedMsg_HD);
+    demodulatedMsg_HD = deinterleavedMsg(:);
+    decodedMsg_HD = Vitdec(demodulatedMsg_HD);
 
-                if bitAllocSort(i) == 3 %QAM8
-                    carrierPosition = BitAllocSum{i};
-                    outPut = reshape(recovered(carrierPosition, :), [], 1);
-                    outPut = outPut';
-                    QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)] ./ sqrt(3 + sqrt(3));
-                    [~, index] = min(abs(repmat(outPut, 8, 1) - repmat(transpose(QAM8), 1, length(outPut))));
-                    temp = de2bi(index - 1, 3, 'left-msb');
-                    demodulatedMsg_HD = reshape(temp', 1, []);
-                else
-                    modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
-                    demodObj = modem.qamdemod(modObj);
-                    set(demodObj, 'DecisionType', 'Hard decision');
-                    demodulatedMsg_HD = demodulate(demodObj, QAM_re);
-                    demodulatedMsg_HD = demodulatedMsg_HD';
-                end
+    if On == 1
 
-                % decisiong
-                % Set up the demodulator object to perform hard decision demodulation
-                demodulated_HD = [demodulated_HD, demodulatedMsg_HD];
-            end
-
-        end
-
-        deinterleavedMsg = Deinterleave(demodulated_HD);
-        demodulatedMsg_HD = deinterleavedMsg(:);
-
-        decodedMsg_HD = Vitdec(demodulatedMsg_HD);
-
-        % iteration
         for iter = 1:iterationT
             decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, recovered, cir);
         end
 
     else
-        %% cal %%
-        recoveredSymbols = recoveredSymbols / rms(recoveredSymbols) * sqrt(10);
-        recoveredSymbols_FDE = recoveredSymbols;
-        % Code properties(channel coding)
 
-        % de-mapping
-        M = 2^BitsPerSymbolQAM;
-        modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
-        demodObj = modem.qamdemod(modObj);
-
-        % decisiong
-        % Set up the demodulator object to perform hard decision demodulation
-        set(demodObj, 'DecisionType', 'Hard decision');
-        demodulatedMsg_HD = demodulate(demodObj, recoveredSymbols);
-        demodulatedMsg_HD = demodulatedMsg_HD';
-
-        deinterleavedMsg = Deinterleave(demodulatedMsg_HD);
-        demodulatedMsg_HD = deinterleavedMsg(:);
-        decodedMsg_HD = Vitdec(demodulatedMsg_HD);
-        %iteration
         for i = 1:iterationT
             decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir);
         end

@@ -1,6 +1,4 @@
 function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, RXSymbols, cir)
-    FFTSize = OFDMParameters.FFTSize;
-    OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     SToPcol = OFDMParameters.SToPcol;
     global RmsAlloc
@@ -12,43 +10,8 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     load('./data/bitAllocSort.mat');
     load('./data/BitAllocSum.mat');
     load('./data/power_alloc.mat');
-    ifftBlock = zeros(FFTSize, SToPcol);
 
-    b = 1;
-
-    for i = 1:length(bitAllocSort)
-
-        if bitAllocSort(i) == 0
-        else
-            % mapping（自带的qammod)
-            if bitAllocSort(i) ~= 0
-                codeMsg1_per = OFDMSymbolNumber * bitAllocSort(i) * length(BitAllocSum{i}) * 2;
-                codeMsg1_perloading = interleavedMsg(b:b + codeMsg1_per - 1, 1);
-                b = codeMsg1_per + b;
-
-                QAMSymbols = Qammod(bitAllocSort(i), codeMsg1_perloading);
-
-                if bitAllocSort(i) == 0
-                    QAMSymbols = 0;
-                else
-                    QAMSymbols = QAMSymbols / RmsAlloc(bitAllocSort(i));
-                    QAMSymbols = reshape(QAMSymbols, length(BitAllocSum{i}), SToPcol);
-                end
-
-                carrierPosition = BitAllocSum{i};
-                carrierPosition = carrierPosition + 2;
-                ifftBlock(carrierPosition, :) = QAMSymbols;
-            end
-
-        end
-
-    end
-
-    load('./data/power_alloc.mat');
-
-    for i = 1:SToPcol
-        ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
-    end
+    ifftBlock = DynamicQammod(interleavedMsg, cir);
 
     %% 结构简单，算ICI
     %% IFFT(zeros padding)
