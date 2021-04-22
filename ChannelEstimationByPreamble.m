@@ -5,12 +5,10 @@ function [H] = ChannelEstimationByPreamble(recvPreamble)
     global FFTSize
     global CPLength
     global PreambleNumber
-    global PreambleSeed
+    global PreambleCarriersNum
 
-    numCarrier = length(PreambleCarrierPositions);
+    load './data/preambleBits'
 
-    bitsNumber = numCarrier * PreambleBitsPerSymbolQAM;
-    preambleBits = randint(bitsNumber, 1, 2, PreambleSeed);
     GQAMSymbols = GrayQAMCoder(preambleBits, PreambleBitsPerSymbolQAM);
 
     recvPreambleSignal = reshape(recvPreamble, FFTSize + CPLength, []);
@@ -19,7 +17,7 @@ function [H] = ChannelEstimationByPreamble(recvPreamble)
     recvQAMSignal = fft(recvPreambleSignal);
     recvQAMSignal = recvQAMSignal(PreambleCarrierPositions, :);
 
-    H_temp = zeros(numCarrier, PreambleNumber);
+    H_temp = zeros(PreambleCarriersNum, PreambleNumber);
 
     for i = 1:PreambleNumber
         H_temp(:, i) = recvQAMSignal(:, i) ./ GQAMSymbols * sqrt(10);

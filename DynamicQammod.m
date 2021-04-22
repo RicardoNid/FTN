@@ -1,7 +1,6 @@
 function QAMSymbols = DynamicQammod(bits, cir)
     global On
     global SToPcol
-    global DataCarrierPositions
     global BitsPerSymbolQAM
     global OFDMSymbolNumber
     global RmsAlloc
@@ -27,27 +26,22 @@ function QAMSymbols = DynamicQammod(bits, cir)
                 b = codeMsg1_per + b;
                 QAMSymbol = Qammod(bitAllocSort(i), codeMsg1_perloading);
                 QAMSymbol = QAMSymbol / RmsAlloc(bitAllocSort(i));
-                % QAMSymbol = QAMSymbol / rms(QAMSymbol);
+                % QAMSymbol = QAMSymbol / rms(QAMSymbol); ??
                 QAMSymbol = reshape(QAMSymbol, length(BitAllocSum{i}), SToPcol);
             end
 
             carrierPosition = BitAllocSum{i};
-            % carrierPosition = carrierPosition + 2;
-            % ifftBlock(carrierPosition, :) = QAMSymbol;
             QAMSymbols(carrierPosition, :) = QAMSymbol;
         end
 
     else
         QAMSymbols = Qammod(BitsPerSymbolQAM, bits);
         QAMSymbols = QAMSymbols / RmsAlloc(4);
-        % QAMSymbols = QAMSymbols / rms(QAMSymbols);
-
-        % 实际训练(on = 0)时,整个训练帧都是已知的,因此文件传递是合法的
 
         if cir == 20
             file = ['./data/QAMSymbols_trans' num2str(20) '.mat'];
             save(file, 'QAMSymbols');
         end
 
-        QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
+        QAMSymbols = reshape(QAMSymbols, SubcarriersNum, SToPcol);
     end

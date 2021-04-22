@@ -26,6 +26,7 @@ function OFDMParameters = InitOFDMParameters()
     global DataCarrierPositions; DataCarrierPositions = 3:226;
     global PreambleCarrierPositions; PreambleCarrierPositions = 2:FFTSize / 2;
     global SubcarriersNum; SubcarriersNum = length(DataCarrierPositions);
+    global PreambleCarriersNum; PreambleCarriersNum = length(PreambleCarrierPositions);
     global OFDMPositions; OFDMPositions = sort([1 DataCarrierPositions FFTSize / 2 + 1 FFTSize + 2 - DataCarrierPositions]);
     % 帧长度
     global BitNumber; BitNumber = length(DataCarrierPositions) * OFDMSymbolNumber * BitsPerSymbolQAM;
@@ -37,6 +38,8 @@ function OFDMParameters = InitOFDMParameters()
     %% 交织参数
     global InterleaverDepth; InterleaverDepth = 32;
 
+    %% QAM参数
+    global QAM8; QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)];
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
     global Iteration; Iteration = 5;

@@ -1,9 +1,3 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: QAM”≥…‰
-%  // ======================================================================
 function QAMSymbols = GrayQAMCoder(bits, BitsPerSymbol)
 
     if isempty(bits)

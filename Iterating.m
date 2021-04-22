@@ -49,7 +49,7 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE, cir)
     decodedMsg_HD = QAM2Bits(dataQAMSymbols);
 
     if On == 0
-        % 此处可能也是不必要的
+        % 此处可能也是不必要的 ??
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
         if CurrentFrame == 20 && i == Iteration

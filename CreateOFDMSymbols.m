@@ -1,7 +1,6 @@
 function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols()
 
     global On
-    global CurrentFrame
     global SToPcol
 
     bits = BitGen();
