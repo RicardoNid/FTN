@@ -6,15 +6,11 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     global DataCarrierPositions
 
     bits = BitGen(cir);
-    bitsPerFrame = bits;
+    bitsPerFrame = bits; % 旁路
 
-    convCodedMsg = Convenc(bits);
-    interleavedMsg = Interleave(convCodedMsg);
+    QAMSymbols = Bits2QAM(bits, cir);
 
-    ifftBlock = zeros(FFTSize, SToPcol);
-
-    % ifftBlock = DynamicQammod(interleavedMsg, cir);
-    QAMSymbols = DynamicQammod(interleavedMsg, cir);
+    ifftBlock = zeros(FFTSize, SToPcol); % 构造FFT数据
     ifftBlock(DataCarrierPositions, :) = QAMSymbols;
 
     if On == 1
@@ -26,4 +22,5 @@ function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
 
     end
 
+    % OFDMSymbols = IFFT(QAMSymbols);
     OFDMSymbols = IFFT(ifftBlock);

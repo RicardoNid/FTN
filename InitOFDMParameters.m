@@ -37,6 +37,8 @@ function OFDMParameters = InitOFDMParameters()
 
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
+    global Iteration; Iteration = 5;
+
     % on=0算比特分配，on=1比特加载
     OFDMParameters.on = 0;
     OFDMParameters.CPLength = 20;

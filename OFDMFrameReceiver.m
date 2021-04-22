@@ -11,9 +11,8 @@
 function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     on = OFDMParameters.on;
     global On
-    iterationT = OFDMParameters.iteration;
+    global Iteration
     CPLength = OFDMParameters.CPLength;
-    BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     preambleNumber = OFDMParameters.PreambleNumber;
     SToPcol = OFDMParameters.SToPcol;
@@ -46,23 +45,20 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         recovered = reshape(recovered, [], 1);
     end
 
-    recoveredSymbols_FDE = recovered / rms(recovered) * sqrt(10);
+    % display(rms(recovered))
+    recoveredSymbols_FDE = recovered / rms(recovered);
 
-    demodulatedMsg_HD = DynamicQamdemod(recovered);
-
-    deinterleavedMsg = Deinterleave(demodulatedMsg_HD);
-    demodulatedMsg_HD = deinterleavedMsg(:);
-    decodedMsg_HD = Vitdec(demodulatedMsg_HD);
+    decodedMsg_HD = QAM2Bits(recovered);
 
     if On == 1
 
-        for iter = 1:iterationT
+        for iter = 1:Iteration
             decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, recovered, cir);
         end
 
     else
 
-        for i = 1:iterationT
+        for i = 1:Iteration
             decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir);
         end
 

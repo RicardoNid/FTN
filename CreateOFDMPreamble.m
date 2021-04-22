@@ -1,9 +1,10 @@
 function preamble = CreateOFDMPreamble(OFDMParameters)
-
+    global RmsAlloc
     bitsNumber = length(OFDMParameters.PreambleCarrierPositions) * OFDMParameters.PreambleBitsPerSymbolQAM;
     preambleBits = randint(bitsNumber, 1, 2, OFDMParameters.PreambleSeed);
     preambleQAMSymbols = GrayQAMCoder(preambleBits, OFDMParameters.PreambleBitsPerSymbolQAM);
-    preambleQAMSymbols = preambleQAMSymbols ./ rms(preambleQAMSymbols);
+    preambleQAMSymbols = preambleQAMSymbols / RmsAlloc(4);
+    % preambleQAMSymbols = preambleQAMSymbols / rms(preambleQAMSymbols);
 
     ifftBlock = zeros(OFDMParameters.FFTSize, 1);
     ifftBlock(OFDMParameters.PreambleCarrierPositions) = preambleQAMSymbols;

@@ -1,60 +1,38 @@
 function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, recoveredSymbols_FDE, cir)
-    FFTSize = OFDMParameters.FFTSize;
-    BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
-    CPLength = OFDMParameters.CPLength;
-    DataCarrierPositions = OFDMParameters.DataCarrierPositions;
-    OFDMPositions = OFDMParameters.OFDMPositions;
-    SubcarriersNum = length(OFDMParameters.DataCarrierPositions);
-    iterationT = OFDMParameters.iteration;
-    SToPcol = OFDMParameters.SToPcol;
+    global RmsAlloc
+    global FFTSize
+    global SToPcol
+    global DataCarrierPositions
+    global BitsPerSymbolQAM
+    global Iteration
+    global SubcarriersNum
 
     % 重复发射机
-    codedMsg = Convenc(decodedMsg_HD);
-    codeMsg = Interleave(codedMsg);
 
-    %% mapping
-    M = 2^BitsPerSymbolQAM;
-    modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
-    QAMSymbols = modulate(modObj, codeMsg);
-    QAMSymbols = QAMSymbols / rms(QAMSymbols) * sqrt(10);
-    QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
+    QAMSymbols = Bits2QAM(decodedMsg_HD, cir);
 
-    %% 结构简单，算ICI
-    S_HD = reshape(QAMSymbols, [], 1);
-    %% IFFT(重复发端操作）zero padding
+    S_HD = QAMSymbols;
+    S_HD = reshape(S_HD, [], 1); % 将QAMSymbols旁路出去
+
     ifftBlock = zeros(FFTSize, SToPcol);
     ifftBlock(DataCarrierPositions, :) = QAMSymbols;
-    ifftBlock(FFTSize + 2 - DataCarrierPositions, :) = conj(ifftBlock(DataCarrierPositions, :));
-    OFDMSymbols = ifft(ifftBlock);
-    OFDMSymbols1 = OFDMSymbols(1:length(OFDMPositions), :);
-    OFDMSymbols1 = [OFDMSymbols1(end - CPLength / 2 + 1:end, :); OFDMSymbols1; OFDMSymbols1(1:CPLength / 2, :)];
-    OFDMSymbols = reshape(OFDMSymbols1, [], 1);
-    %% FFT
+
+    OFDMSymbols = IFFT(ifftBlock);
     recovered = FFT(OFDMSymbols);
+
+    % 做差部分
     recoveredSymbols = reshape(recovered, [], 1);
-    recoveredSymbols = recoveredSymbols / rms(recoveredSymbols) * sqrt(10); %16QAM记得改
-    %% ICI
     ICI = recoveredSymbols - S_HD;
     recoveredSymbols = recoveredSymbols_FDE - ICI;
 
-    %% de-mapping
-    M = 2^BitsPerSymbolQAM;
-    modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
-    demodObj = modem.qamdemod(modObj);
-    % Set up the demodulator object to perform hard decision demodulation
-    set(demodObj, 'DecisionType', 'Hard decision');
-    demodulatedMsg_HD = demodulate(demodObj, recoveredSymbols);
-    demodulatedMsg_HD = demodulatedMsg_HD';
+    decodedMsg_HD = QAM2Bits(recoveredSymbols);
 
-    codedMsg = Deinterleave(demodulatedMsg_HD);
-
-    demodulatedMsg_HD = codedMsg(:);
-    %% Use the Viterbi decoder in hard decision mode
-    decodedMsg_HD = Vitdec(demodulatedMsg_HD);
+    % 此处可能也是不必要的
+    recoveredSymbols = recoveredSymbols * RmsAlloc(4);
 
     if cir == 20
 
-        if i == iterationT
+        if i == Iteration
             file = ['./data/QAMSymbols_trans' num2str(cir) '.mat']; %QAMSymbols_trans由CreateOFDMSymbols函数on=0时保存，用来算每个子载波的SNR
             QAMSymbols_trans = cell2mat(struct2cell(load(file)));
             SendSymbols = QAMSymbols_trans * sqrt(10);

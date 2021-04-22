@@ -8,8 +8,6 @@ function QAMSymbols = DynamicQammod(bits, cir)
     global RmsAlloc
     global SubcarriersNum
 
-    ifftBlock = zeros(FFTSize, SToPcol);
-
     if On == 1
         %% bit loading %%
         load('./data/bitAlloc.mat')
@@ -30,6 +28,7 @@ function QAMSymbols = DynamicQammod(bits, cir)
                 b = codeMsg1_per + b;
                 QAMSymbol = Qammod(bitAllocSort(i), codeMsg1_perloading);
                 QAMSymbol = QAMSymbol / RmsAlloc(bitAllocSort(i));
+                % QAMSymbol = QAMSymbol / rms(QAMSymbol);
                 QAMSymbol = reshape(QAMSymbol, length(BitAllocSum{i}), SToPcol);
             end
 
@@ -40,20 +39,13 @@ function QAMSymbols = DynamicQammod(bits, cir)
 
         end
 
-        ifftBlock(DataCarrierPositions, :) = QAMSymbols;
-
-        % % 功率加载
-        % for i = 1:SToPcol
-        %     ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
-        % end
-
     else
         QAMSymbols = Qammod(BitsPerSymbolQAM, bits);
         QAMSymbols = QAMSymbols / RmsAlloc(4);
+        % QAMSymbols = QAMSymbols / rms(QAMSymbols);
 
         % 实际训练(on = 0)时,整个训练帧都是已知的,因此文件传递是合法的
         file = ['./data/QAMSymbols_trans' num2str(cir) '.mat'];
         save(file, 'QAMSymbols');
         QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
-        ifftBlock(DataCarrierPositions, :) = QAMSymbols;
     end

@@ -15,7 +15,7 @@ function Demodulated = DynamicQamdemod(recovered)
                 carrierPosition = BitAllocSum{i};
                 QAM = reshape(recovered(carrierPosition, :), [], 1);
                 QAM_re = QAM / rms(QAM) * RmsAlloc(bitAllocSort(i));
-                % de-mapping
+
                 M = 2^bitAllocSort(i);
 
                 if bitAllocSort(i) == 3 %QAM8
@@ -43,18 +43,12 @@ function Demodulated = DynamicQamdemod(recovered)
 
         Demodulated = demodulated_HD;
     else
-        %% cal %%
-        recovered = recovered / rms(recovered) * sqrt(10);
-        % recoveredSymbols_FDE = recovered;
-        % Code properties(channel coding)
+        recovered = recovered / rms(recovered) * RmsAlloc(4);
 
-        % de-mapping
         M = 2^BitsPerSymbolQAM;
         modObj = modem.qammod('M', M, 'SymbolOrder', 'Gray', 'InputType', 'Bit');
         demodObj = modem.qamdemod(modObj);
 
-        % decisiong
-        % Set up the demodulator object to perform hard decision demodulation
         set(demodObj, 'DecisionType', 'Hard decision');
         demodulatedMsg_HD = demodulate(demodObj, recovered);
         Demodulated = demodulatedMsg_HD';
