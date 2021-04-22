@@ -89,6 +89,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
             save './data/bitAllocSort' bitAllocSort;
             save './data/BitAllocSum' BitAllocSum;
             save './data/power_alloc' power_alloc;
+            % Alloc();
         end
 
     end
