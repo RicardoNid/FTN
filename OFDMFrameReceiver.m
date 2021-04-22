@@ -26,7 +26,13 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     tap = 20;
     H = smooth(H, tap);
     recvOFDMSignal = recvOFDMFrame(preambleNumber * (FFTSize + CPLength) + 1:end);
-    recovered = RecoverOFDMSymbolsWithPilot(recvOFDMSignal, OFDMParameters, H);
+    recovered = FFT(recvOFDMSignal);
+
+    % 使用估计出的信道信息
+    for i = 1:SToPcol;
+        recovered(:, i) = recovered(:, i) ./ H(DataCarrierPositions);
+    end
+
 
     % 除对应功率
     if on == 1

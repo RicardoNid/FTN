@@ -9,9 +9,9 @@ function [recoveredQAMSymbols] = RecoverOFDMSymbolsWithPilot(recvOFDMSignal, OFD
     DataCarrierPositions = OFDMParameters.DataCarrierPositions;
     FFTSize = OFDMParameters.FFTSize;
     CPLength = OFDMParameters.CPLength;
-    recvOFDMSignal = reshape(recvOFDMSignal, length(OFDMPositions) + CPLength, []);
+
+    recvOFDMSignal = reshape(recvOFDMSignal, [], OFDMSymbolNumber * 2);
     recvOFDMSignal = recvOFDMSignal(CPLength / 2 + 1:end - CPLength / 2, :);
-    % ≤Â0£¨ ±”ÚŒ≤≤ø»•¡„
     recvOFDMSignal_interp = zeros(FFTSize, OFDMSymbolNumber * 2);
     recvOFDMSignal_interp(1:length(OFDMPositions), :) = recvOFDMSignal;
     recvOFDMSignal = fft(recvOFDMSignal_interp);

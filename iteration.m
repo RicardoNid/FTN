@@ -29,7 +29,7 @@ function decodedMsg_HD = iteration(decodedMsg_HD, OFDMParameters, tblen, i, reco
     OFDMSymbols1 = [OFDMSymbols1(end - CPLength / 2 + 1:end, :); OFDMSymbols1; OFDMSymbols1(1:CPLength / 2, :)];
     OFDMSymbols = reshape(OFDMSymbols1, [], 1);
     %% FFT
-    recovered = RecoverOFDMSymbols(OFDMSymbols, OFDMParameters);
+    recovered = FFT(OFDMSymbols);
     recoveredSymbols = reshape(recovered, [], 1);
     recoveredSymbols = recoveredSymbols / rms(recoveredSymbols) * sqrt(10); %16QAM¼ÇµÃ¸Ä
     %% ICI

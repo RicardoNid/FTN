@@ -27,7 +27,6 @@ sigma = sqrt(code_power / (snr * 2)); %sigmaÈçºÎ¼ÆËã£¬Óëµ±Ç°SNRºÍĞÅºÅÆ½¾ùÄÜÁ¿ÓĞ¹
 %°Ñ1¸ö´óÖ¡²ğ³É20¸ö×ÓÖ¡
 OFDMFrame_total = reshape(OFDMFrame_rec, [], 20);
 
-% // ===========================Ã»ÓĞĞÇ×ùÍ¼£¬Ö»ÓĞ¾ÀºóÎóÂëÂÊ==================================
 % ÒëÂëºóµÄ20Ö¡µÄ×ÜbitsÊı(ÓÃÀ´Ëã×ÜÌåÎóÂëÂÊ£©
 load('./data/bitsAllFrame.mat')
 debitsAllFrame = [];
@@ -40,6 +39,8 @@ end
 
 [nErrors_HD, ber_HD] = biterr(bitsAllFrame, debitsAllFrame);
 ber_HD
+
+% on = 1Ê±Ö´ĞĞÒ»±é
 
 OFDMParameters.on = 1;
 

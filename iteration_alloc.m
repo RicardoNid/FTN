@@ -54,7 +54,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, R
     %% IFFT(zeros padding)
     OFDMSymbols = IFFT(ifftBlock);
     %% FFT(zeros padding)
-    recovered = RecoverOFDMSymbols(OFDMSymbols, OFDMParameters);
+    recovered = FFT(OFDMSymbols);
     %% º∆À„ICI
     QAMSymbols_trans0 = ifftBlock(DataCarrierPositions, :);
     ICI = recovered - QAMSymbols_trans0;

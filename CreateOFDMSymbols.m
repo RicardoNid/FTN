@@ -6,12 +6,12 @@
 %  // ======================================================================
 function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
     on = OFDMParameters.on;
-    FFTSize = OFDMParameters.FFTSize;
-    OFDMSymbolNumber = OFDMParameters.OFDMSymbolNumber;
-    BitsPerSymbolQAM = OFDMParameters.BitsPerSymbolQAM;
-    DataCarrierPositions = OFDMParameters.DataCarrierPositions;
-    SToPcol = OFDMParameters.SToPcol;
-    global RmsAlloc
+    global FFTSize;
+    global OFDMSymbolNumber;
+    global BitsPerSymbolQAM;
+    global DataCarrierPositions;
+    global SToPcol;
+    global RmsAlloc;
 
     %% Random BitGen
     bits = BitGen(cir);
