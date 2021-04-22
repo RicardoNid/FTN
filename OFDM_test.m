@@ -11,7 +11,7 @@ BER_SNR = [];
 BER_MC_Sim_total = [];
 warning off all
 OFDMParameters = InitOFDMParameters();
-
+global On
 %% 发射机
 OFDMFrame = OFDMBigFrameGenerator(OFDMParameters);
 
@@ -43,6 +43,7 @@ ber_HD
 % on = 1时执行一遍
 
 OFDMParameters.on = 1;
+On = 1;
 
 %% 发射机
 OFDMFrame = OFDMBigFrameGenerator(OFDMParameters);

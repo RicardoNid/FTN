@@ -1,9 +1,3 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: ¹À¼ÆÐÅµÀ
-%  // ======================================================================
 function [H] = ChannelEstimationByPreamble(recvPreamble, OFDMParameters)
     %% parameters
     global PreambleBitsPerSymbolQAM

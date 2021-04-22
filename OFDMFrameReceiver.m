@@ -33,7 +33,6 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
         recovered(:, i) = recovered(:, i) ./ H(DataCarrierPositions);
     end
 
-
     % 除对应功率
     if on == 1
         load('./data/power_alloc.mat');
@@ -91,16 +90,9 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
 
         % iteration
         for iter = 1:iterationT
-            % (9) // =====================带有误码率的输出=====================================
-            %   [PerQAMtotal,PerQAMError,QAM_re_sum,pre_code_errors,decodedMsg_HD,number_of_error_HD]=iteration_alloc(decodedMsg_HD,OFDMParameters,tblen,iter,recovered, cir);
-            %  // =====================不带误码率的输出=====================================
             decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, recovered, cir);
         end
 
-        % (10) // ==========================================================
-        %     将错误数输出，在OFDM_test中算误码率
-        %      number_of_error = number_of_error_HD;
-        %  // ==========================================================
     else
         %% cal %%
         recoveredSymbols = recoveredSymbols / rms(recoveredSymbols) * sqrt(10);

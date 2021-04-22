@@ -1,6 +1,7 @@
 function OFDMParameters = InitOFDMParameters()
 
     %% on = 0 训练(计算比特分配)，on = 1 工作
+    global On; On = 0;
     global BitAllocCal; BitAllocCal = 0;
 
     %% OFDM参数
