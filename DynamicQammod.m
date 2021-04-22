@@ -43,7 +43,11 @@ function QAMSymbols = DynamicQammod(bits, cir)
         % QAMSymbols = QAMSymbols / rms(QAMSymbols);
 
         % 实际训练(on = 0)时,整个训练帧都是已知的,因此文件传递是合法的
-        file = ['./data/QAMSymbols_trans' num2str(cir) '.mat'];
-        save(file, 'QAMSymbols');
+
+        if cir == 20
+            file = ['./data/QAMSymbols_trans' num2str(20) '.mat'];
+            save(file, 'QAMSymbols');
+        end
+
         QAMSymbols = reshape(QAMSymbols, length(DataCarrierPositions), SToPcol);
     end

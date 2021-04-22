@@ -1,14 +1,16 @@
-function [H] = ChannelEstimationByPreamble(recvPreamble, OFDMParameters)
+function [H] = ChannelEstimationByPreamble(recvPreamble)
     %% parameters
     global PreambleBitsPerSymbolQAM
-    PreambleCarrierPositions = OFDMParameters.PreambleCarrierPositions;
-    FFTSize = OFDMParameters.FFTSize;
-    CPLength = OFDMParameters.CPLength;
-    numCarrier = length(OFDMParameters.PreambleCarrierPositions);
-    PreambleNumber = OFDMParameters.PreambleNumber;
+    global PreambleCarrierPositions
+    global FFTSize
+    global CPLength
+    global PreambleNumber
+    global PreambleSeed
+
+    numCarrier = length(PreambleCarrierPositions);
 
     bitsNumber = numCarrier * PreambleBitsPerSymbolQAM;
-    preambleBits = randint(bitsNumber, 1, 2, OFDMParameters.PreambleSeed);
+    preambleBits = randint(bitsNumber, 1, 2, PreambleSeed);
     GQAMSymbols = GrayQAMCoder(preambleBits, PreambleBitsPerSymbolQAM);
 
     recvPreambleSignal = reshape(recvPreamble, FFTSize + CPLength, []);

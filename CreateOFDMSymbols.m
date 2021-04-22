@@ -1,26 +1,21 @@
-function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols(OFDMParameters, cir)
+function [OFDMSymbols, bitsPerFrame] = CreateOFDMSymbols()
 
     global On
-    global FFTSize
+    global CurrentFrame
     global SToPcol
-    global DataCarrierPositions
 
-    bits = BitGen(cir);
+    bits = BitGen();
     bitsPerFrame = bits; % 旁路
 
-    QAMSymbols = Bits2QAM(bits, cir);
-
-    ifftBlock = zeros(FFTSize, SToPcol); % 构造FFT数据
-    ifftBlock(DataCarrierPositions, :) = QAMSymbols;
+    QAMSymbols = Bits2QAM(bits);
 
     if On == 1
         load('./data/power_alloc.mat');
 
         for i = 1:SToPcol
-            ifftBlock(DataCarrierPositions, i) = ifftBlock(DataCarrierPositions, i) .* sqrt(power_alloc');
+            QAMSymbols(:, i) = QAMSymbols(:, i) .* sqrt(power_alloc');
         end
 
     end
 
-    % OFDMSymbols = IFFT(QAMSymbols);
-    OFDMSymbols = IFFT(ifftBlock);
+    OFDMSymbols = IFFT(QAMSymbols);

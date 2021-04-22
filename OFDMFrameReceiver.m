@@ -1,31 +1,18 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: 接收端DSP
-%  // ======================================================================
-
-% (4) // =====================带有误码率的输出=====================================
-% function  [PerQAMtotal,PerQAMError,QAM_re_sum,pre_code_errors,number_of_error] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
-%  // =====================不带误码率的输出=====================================
-function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
-    on = OFDMParameters.on;
+function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, cir)
     global On
     global Iteration
-    CPLength = OFDMParameters.CPLength;
-    DataCarrierPositions = OFDMParameters.DataCarrierPositions;
-    preambleNumber = OFDMParameters.PreambleNumber;
-    SToPcol = OFDMParameters.SToPcol;
-    FFTSize = OFDMParameters.FFTSize;
-    global tblen
-    global RmsAlloc
+    global CPLength
+    global DataCarrierPositions
+    global PreambleNumber
+    global SToPcol
+    global FFTSize
 
     %% 估计信道和FFT
-    preamble = recvOFDMFrame(1:preambleNumber * (FFTSize + CPLength));
-    H = ChannelEstimationByPreamble(preamble, OFDMParameters);
+    preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength));
+    H = ChannelEstimationByPreamble(preamble);
     tap = 20;
     H = smooth(H, tap);
-    recvOFDMSignal = recvOFDMFrame(preambleNumber * (FFTSize + CPLength) + 1:end);
+    recvOFDMSignal = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
     recovered = FFT(recvOFDMSignal);
 
     % 使用估计出的信道信息
@@ -34,7 +21,7 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     end
 
     % 除对应功率
-    if on == 1
+    if On == 1
         load('./data/power_alloc.mat');
 
         for i = 1:SToPcol
@@ -48,5 +35,5 @@ function [decodedMsg_HD] = OFDMFrameReceiver(recvOFDMFrame, OFDMParameters, cir)
     decodedMsg_HD = QAM2Bits(recovered);
 
     for iter = 1:Iteration
-        decodedMsg_HD = Iterating(decodedMsg_HD, OFDMParameters, tblen, i, recovered, cir);
+        decodedMsg_HD = Iterating(decodedMsg_HD, iter, recovered, cir);
     end

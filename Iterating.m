@@ -1,12 +1,12 @@
-function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, i, FDE, cir)
+function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE, cir)
     global On
     global RmsAlloc
-    global FFTSize
     global SToPcol
     global DataCarrierPositions
     global Iteration
+    global CurrentFrame
 
-    QAMSymbols = Bits2QAM(decodedMsg_HD, cir);
+    QAMSymbols = Bits2QAM(decodedMsg_HD);
 
     if On == 1
         load('./data/power_alloc.mat');
@@ -17,10 +17,8 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, i
 
     end
 
-    ifftBlock = zeros(FFTSize, SToPcol);
-    ifftBlock(DataCarrierPositions, :) = QAMSymbols;
+    OFDMSymbols = IFFT(QAMSymbols);
 
-    OFDMSymbols = IFFT(ifftBlock);
     recovered = FFT(OFDMSymbols);
 
     if On == 1
@@ -54,7 +52,7 @@ function decodedMsg_HD = iteration_alloc(decodedMsg_HD, OFDMParameters, tblen, i
         % 此处可能也是不必要的
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
-        if cir == 20 && i == Iteration
+        if CurrentFrame == 20 && i == Iteration
             Alloc(dataQAMSymbols);
         end
 

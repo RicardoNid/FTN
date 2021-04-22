@@ -6,7 +6,6 @@
 %  // ======================================================================
 function SNR = SNRLocation(recoveredSymbols, transmittedSymbols)
     global SubcarriersNum
-    %  length(OFDMParameters.DataCarrierPositions);
     recoveredSymbols = reshape(recoveredSymbols, SubcarriersNum, []);
     transmittedSymbols = reshape(transmittedSymbols, SubcarriersNum, []);
     SNR = zeros(SubcarriersNum, 1);
@@ -17,10 +16,4 @@ function SNR = SNRLocation(recoveredSymbols, transmittedSymbols)
         %   SNRdB(i) = 10*log10(SNR(i));
     end
 
-    %  // ======================================================================
-    %  传入Chow算法里的SNR是取dB之前，这里画的每个子载波对应的SNR是取dB后
-    % figure; plot(SNRdB);
-    % xlabel('subcarrier');
-    % ylabel('SNRdB');
-    %  // ======================================================================
 end

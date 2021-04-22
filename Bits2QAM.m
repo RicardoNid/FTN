@@ -1,6 +1,5 @@
-function QAMSymbols = Bits2QAM(bits, cir)
-    global DataCarrierPositions
-    global SToPcol
+function QAMSymbols = Bits2QAM(bits)
+    global CurrentFrame
     convCodedMsg = Convenc(bits);
     interleavedMsg = Interleave(convCodedMsg);
-    QAMSymbols = DynamicQammod(interleavedMsg, cir); %  QAM映射
+    QAMSymbols = DynamicQammod(interleavedMsg, CurrentFrame); %  QAM映射
