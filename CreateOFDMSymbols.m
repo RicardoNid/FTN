@@ -1,5 +1,6 @@
 function OFDMSymbols = CreateOFDMSymbols(bits)
     global On
+    global IsPreamble
     global PowerOn
 
     QAMSymbols = Bits2QAM(bits); % æÌª˝±‡¬Î -> Ωª÷Ø -> QAM”≥…‰
@@ -14,4 +15,5 @@ function OFDMSymbols = CreateOFDMSymbols(bits)
         QAMSymbols = PowerOnOff(QAMSymbols);
     end
 
+    IsPreamble = 0;
     OFDMSymbols = IFFT(QAMSymbols); % ifft

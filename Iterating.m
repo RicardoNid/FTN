@@ -1,5 +1,6 @@
 function decoded = Iterating(decoded, i, FDE)
     global On
+    global IsPreamble
     global PowerOn
     global RmsAlloc
     global Iteration
@@ -18,6 +19,7 @@ function decoded = Iterating(decoded, i, FDE)
         QAMSymbols = PowerOnOff(QAMSymbols);
     end
 
+    IsPreamble = 0;
     OFDMSymbols = IFFT(QAMSymbols);
 
     recovered = FFT(OFDMSymbols); % ÅÔÂ·2,recovered

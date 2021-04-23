@@ -1,5 +1,6 @@
 function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     global On
+    global IsPreamble
     global PowerOn
     global Iteration
     global CPLength
@@ -18,6 +19,7 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     tap = 20;
     H = smooth(H, tap); % 对修正系数做span为20的滑动平均
 
+    IsPreamble = 0;
     FDE = FFT(message); % fft,FDE尺寸224*16
 
     % 使用估计出的信道信息

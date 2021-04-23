@@ -15,7 +15,7 @@ function OFDMParameters = InitOFDMParameters()
     global CPLength; CPLength = 20;
     % 训练序列长度
     global PreambleNumber; PreambleNumber = 2;
-    % FFT尺寸
+    % fft尺寸
     global FFTSize; FFTSize = 512;
 
     %% 卷积编码-维特比译码参数
