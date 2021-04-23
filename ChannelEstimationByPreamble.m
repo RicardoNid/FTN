@@ -1,5 +1,4 @@
 function [H] = ChannelEstimationByPreamble(recvPreambleQAMSymbols)
-    %% parameters
     global PreambleNumber
     global PreambleCarriersNum
 

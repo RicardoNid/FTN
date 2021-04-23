@@ -25,7 +25,7 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     IsPreamble = 0;
     FDE = FFT(message); % fft,FDE尺寸224*16
 
-    % 使用估计出的信道信息
+    % 信道均?
     for i = 1:SToPcol;
         FDE(:, i) = FDE(:, i) ./ H(DataCarrierPositions - 1); % ?? 此处的子载波对齐可能有误
     end

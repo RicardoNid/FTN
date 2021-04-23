@@ -1,7 +1,5 @@
 function SNR = SNRLocation(recoveredSymbols, transmittedSymbols)
     global SubcarriersNum
-    recoveredSymbols = reshape(recoveredSymbols, SubcarriersNum, []);
-    transmittedSymbols = reshape(transmittedSymbols, SubcarriersNum, []);
     SNR = zeros(SubcarriersNum, 1);
 
     for i = 1:SubcarriersNum

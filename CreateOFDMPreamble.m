@@ -16,5 +16,4 @@ function preamble = CreateOFDMPreamble()
     IsPreamble = 1;
     preamble = IFFT(preambleQAMSymbols);
 
-    save './data/preamble' preamble % 训练OFDM符号,存储在发射机
     preamble = repmat(preamble, PreambleNumber, 1); %重复2次

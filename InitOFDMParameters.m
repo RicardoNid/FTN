@@ -63,3 +63,11 @@ function OFDMParameters = InitOFDMParameters()
     global FrameNum; FrameNum = 20;
     % global Seed; Seed = randi(100, [1, 100]);
     % global FrameNum; FrameNum = 100;
+
+    %% Chow算法相关
+    global BER; BER = 1E-3;
+    global SER; SER = 1 - (1 - BER)^4;
+    global Gap; Gap = 1/3 * (qfuncinv(SER / 4))^2;
+    global TargetBits; TargetBits = SubcarriersNum * BitsPerSymbolQAM;
+    % BER调整的迭代步长
+    global Miu; Miu = 1e-5;
