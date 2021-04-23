@@ -15,7 +15,10 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength)); % 将收到的子帧分为训练序列和信息序列
     message = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
 
-    H = ChannelEstimationByPreamble(preamble); % 信道估计,得到(训练序列所占据的)各个子载波上的修正系数,H尺寸255*1
+    IsPreamble = 1;
+    reambleQAMSymbols = FFT(preamble);
+
+    H = ChannelEstimationByPreamble(reambleQAMSymbols); % 信道估计,得到(训练序列所占据的)各个子载波上的修正系数,H尺寸255*1
     tap = 20;
     H = smooth(H, tap); % 对修正系数做span为20的滑动平均
 

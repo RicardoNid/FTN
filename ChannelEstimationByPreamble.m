@@ -1,6 +1,5 @@
-function [H] = ChannelEstimationByPreamble(preamble)
+function [H] = ChannelEstimationByPreamble(recvPreambleQAMSymbols)
     %% parameters
-    global IsPreamble
     global PreambleNumber
     global PreambleCarriersNum
 
@@ -8,9 +7,6 @@ function [H] = ChannelEstimationByPreamble(preamble)
     load './data/preambleQAMSymbols' % 接收机内置preambleQAMSymbol的QAM符号序列
 
     %% 自此以下的部分需要硬件实现
-    IsPreamble = 1;
-    recvPreambleQAMSymbols = FFT(preamble);
-
     ratio = zeros(PreambleCarriersNum, PreambleNumber);
 
     for i = 1:PreambleNumber
