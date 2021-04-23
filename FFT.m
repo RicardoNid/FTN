@@ -8,16 +8,23 @@ function OFDMSymbols = FFT(OFDMSignals)
     global CPLength
     global SToPcol
 
-    if IsPreamble == 1
-        preambles = reshape(OFDMSignals, [], PreambleNumber); % 接收到两个preamble
-        preamblesWithOutCP = preambles(CPLength / 2 + 1:end - CPLength / 2, :); % 去除循环前缀
-        recvQAMSignal = fft(preamblesWithOutCP); % FFT解复用, 求preamble符号
-        OFDMSymbols = recvQAMSignal(PreambleCarrierPositions, :); % 取出preamble符号
+    if IsPreamble == 1;
+        symbolLength = PreambleNumber;
+        positionsOut = PreambleCarrierPositions;
+        positionsIn = 1:FFTSize;
     else
-        OFDMSignals = reshape(OFDMSignals, [], SToPcol); % S2P
-        OFDMSignals = OFDMSignals(CPLength / 2 + 1:end - CPLength / 2, :); % 去掉CP
-        fftBlock = zeros(FFTSize, SToPcol);
-        fftBlock(1:length(OFDMPositions), :) = OFDMSignals;
-        OFDMSignals = fft(fftBlock);
-        OFDMSymbols = OFDMSignals(DataCarrierPositions, :);
+        symbolLength = SToPcol;
+        positionsOut = DataCarrierPositions;
+        positionsIn = OFDMPositions;
     end
+
+    %% 处理变换前的数据
+    OFDMSignals = reshape(OFDMSignals, [], symbolLength); % 串->并转换
+    OFDMSignals = OFDMSignals(CPLength / 2 + 1:end - CPLength / 2, :); % 去掉循环前缀
+    %% 填充变换前的数据
+    fftBlock = zeros(FFTSize, symbolLength);
+    fftBlock(1:length(positionsIn), :) = OFDMSignals;
+    %% 进行变换
+    OFDMSignals = fft(fftBlock); % 标准fft
+    %% 提取变换后的数据
+    OFDMSymbols = OFDMSignals(positionsOut, :); % 提取需要的子载波

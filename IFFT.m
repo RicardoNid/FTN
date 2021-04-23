@@ -8,19 +8,22 @@ function [OFDMSymbols] = IFFT(QAMSymbols)
     global SToPcol
 
     if IsPreamble == 1;
-        ifftBlock = zeros(FFTSize, 1); % padding为ifftBlock
-        ifftBlock(PreambleCarrierPositions) = QAMSymbols;
-        ifftBlock(FFTSize + 2 - PreambleCarrierPositions) = conj(QAMSymbols);
-        preamble = ifft(ifftBlock); % 进行ifft
-        OFDMSymbols = [preamble(end - CPLength / 2 + 1:end); preamble; preamble(1:CPLength / 2)]; % 增加循环前缀
+        symbolLength = 1;
+        positionsIn = PreambleCarrierPositions;
+        positionsOut = 1:FFTSize;
     else
-        %% 将数据"放置"到ifftBlock
-        ifftBlock = zeros(FFTSize, SToPcol); % padding
-        ifftBlock(DataCarrierPositions, :) = QAMSymbols; % 放置QAM符号
-        ifftBlock(FFTSize + 2 - DataCarrierPositions, :) = conj(ifftBlock(DataCarrierPositions, :)); % 放置其共轭
-
-        OFDMSymbols = ifft(ifftBlock); % 标准ifft
-        OFDMSymbols = OFDMSymbols(1:length(OFDMPositions), :); % 从ifftBlock提取信息符号
-        OFDMSymbols = [OFDMSymbols(end - CPLength / 2 + 1:end, :); OFDMSymbols; OFDMSymbols(1:CPLength / 2, :)]; % 增加循环前缀
-        OFDMSymbols = reshape(OFDMSymbols, [], 1); % 并->串转换,在硬件上并不进行
+        symbolLength = SToPcol;
+        positionsIn = DataCarrierPositions;
+        positionsOut = OFDMPositions;
     end
+
+    %% 填充变换前的数据
+    ifftBlock = zeros(FFTSize, symbolLength); % 预先padding
+    ifftBlock(positionsIn, :) = QAMSymbols; % "放置"QAM符号
+    ifftBlock(FFTSize + 2 - positionsIn, :) = conj(ifftBlock(positionsIn, :)); % "放置"其共轭
+    %% 进行变换
+    OFDMSymbols = ifft(ifftBlock); % 标准ifft
+    %% 处理变换后的数据
+    OFDMSymbols = OFDMSymbols(1:length(positionsOut), :); % 提取需要的子载波
+    OFDMSymbols = [OFDMSymbols(end - CPLength / 2 + 1:end, :); OFDMSymbols; OFDMSymbols(1:CPLength / 2, :)]; % 增加循环前缀
+    OFDMSymbols = reshape(OFDMSymbols, [], 1); % 并->串转换
