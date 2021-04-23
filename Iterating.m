@@ -1,4 +1,4 @@
-function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDEInner)
+function decoded = Iterating(decoded, i, FDE)
     global On
     global RmsAlloc
     global SToPcol
@@ -7,8 +7,12 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDEInner)
     global CurrentFrame
     global FrameNum
 
+    %% 关于FDE的命名我又做了仔细考虑,之前内外功率分配同时去除是对外部的QAM解映射产生了影响,而不是功率分配累积
+    % Iterating内是局部作用域,FDE命名没有side effcet,因此改回FDE
+    % 更进一步说,matlab没有按引用传递,只有按值传递,所以所有side effct只能通过返回值产生
+
     %% 关于此部分代码的理解请参见图NO-DMT DSP
-    QAMSymbols = Bits2QAM(decodedMsg_HD); % 旁路1,QAMSymbols
+    QAMSymbols = Bits2QAM(decoded); % 旁路1,QAMSymbols
 
     if On == 1
         load('./data/power_alloc.mat');
@@ -25,7 +29,7 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDEInner)
 
     %% 旁路汇集部分
     ICI = recovered - QAMSymbols;
-    dataQAMSymbols = FDEInner - ICI;
+    dataQAMSymbols = FDE - ICI;
     %% 除功率分配
     if On == 1
 
@@ -35,7 +39,7 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDEInner)
 
     end
 
-    decodedMsg_HD = QAM2Bits(dataQAMSymbols);
+    decoded = QAM2Bits(dataQAMSymbols);
 
     if On == 0 && CurrentFrame == FrameNum && i == Iteration
         % ?? 此处可能也是不必要的

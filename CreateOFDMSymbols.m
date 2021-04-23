@@ -5,7 +5,7 @@ function OFDMSymbols = CreateOFDMSymbols(bits)
     QAMSymbols = Bits2QAM(bits); % 卷积编码 -> 交织 -> QAM映射
 
     % 保存QAMSymbols用于比特分配
-    % 实际实现中,比特分配采用固定的子帧,对应的QAM符号,存储在接收机与发射机
+    % 实际实现中,比特分配采用固定的子帧,对应的QAM符号,同时存储在接收机与发射机
     file = './data/QAMSymbols_trans.mat';
     save(file, 'QAMSymbols');
 

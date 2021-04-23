@@ -1,21 +1,26 @@
 function OFDMParameters = InitOFDMParameters()
 
-    %% on = 0 训练(计算比特分配)，on = 1 工作
+    %% 控制参数,通过改变它们来控制仿真流程
+    % on = 0 训练(计算比特/功率分配)模式，on = 1 工作(加载比特/功率分配)模式
     global On; On = 0;
+    % 当前子帧,和随机种子取用/是否进行比特分配计算相关
     global CurrentFrame; CurrentFrame = 1;
 
-    global BitAllocCal; BitAllocCal = 0;
-
     %% OFDM参数
+    % 循环前缀长度
     global CPLength; CPLength = 20;
+    % 训练序列长度
     global PreambleNumber; PreambleNumber = 2;
+    % FFT尺寸
     global FFTSize; FFTSize = 512;
 
     %% 卷积编码-维特比译码参数
     ConvConstLen = 7;
     ConvCodeGen = [171, 133];
     global trellis; trellis = poly2trellis (ConvConstLen, ConvCodeGen);
-    global tblen; tblen = 90;
+    % 维特比译码抛弃比特数量
+    global tblen; tblen = 120;
+    % 编码率
     global ConvCodeRate; ConvCodeRate = 1/2;
 
     % Symbol
@@ -36,10 +41,13 @@ function OFDMParameters = InitOFDMParameters()
     global PreambleSeed; PreambleSeed = 20;
 
     %% 交织参数
+    % 交织深度
     global InterleaverDepth; InterleaverDepth = 32;
 
     %% QAM参数
+    % QAM8的符号
     global QAM8; QAM8 = [-1 - sqrt(3), -1 + 1i, -1 - 1i, 1i * (1 + sqrt(3)), -1i * (1 + sqrt(3)), 1 + 1i, 1 - 1i, 1 + sqrt(3)];
+    % 不同比特数量下,QAM符号rms的理论值
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
     %% 系统整体参数

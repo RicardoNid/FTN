@@ -2,6 +2,7 @@ function none = Alloc(recoveredSymbols)
 
     global SubcarriersNum
 
+    % 实际实现中,比特分配采用固定的子帧,对应的QAM符号,同时存储在接收机与发射机
     file = './data/QAMSymbols_trans.mat';
     QAMSymbols_trans = cell2mat(struct2cell(load(file)));
 
@@ -10,7 +11,7 @@ function none = Alloc(recoveredSymbols)
 
     recoveredQAMSymbols = reshape(recoveredSymbols, 1, []);
 
-    SNR = SNRLocation(recoveredQAMSymbols, SendSymbols);
+    SNR = SNRLocation(recoveredQAMSymbols, SendSymbols); % SNR是对比真实QAM符号和迭代后恢复的QAM符号得到
     %         title([num2str(i),'iteration','SNRPersubcarrier '])
 
     BER = 1e-3; %误码率

@@ -26,5 +26,5 @@ function Demodulated = DynamicQamdemod(FDE)
     else % 训练时,每个子载波分配固定比特(4)
         FDE = reshape(FDE, [], 1); % 并->串转换
         FDE = FDE / rms(FDE) * RmsAlloc(4); % ?? 此处可能也是不必要的
-        Demodulated = Qamdemod(BitsPerSymbolQAM, FDE); % 1*14336
+        Demodulated = Qamdemod(BitsPerSymbolQAM, FDE);
     end

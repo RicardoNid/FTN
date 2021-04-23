@@ -7,36 +7,36 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     global SToPcol
     global FFTSize
 
-    %% ä¼°è®¡ä¿¡é“å’ŒFFT
-    preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength)); % å°†æ”¶åˆ°çš„å­å¸§åˆ†ä¸ºè®­ç»ƒåºåˆ—å’Œä¿¡æ¯åºåˆ—
+    %% ¹À¼ÆĞÅµÀºÍFFT
+    preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength)); % ½«ÊÕµ½µÄ×ÓÖ¡·ÖÎªÑµÁ·ĞòÁĞºÍĞÅÏ¢ĞòÁĞ
     message = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
 
-    H = ChannelEstimationByPreamble(preamble); % ä¿¡é“ä¼°è®¡,å¾—åˆ°(è®­ç»ƒåºåˆ—æ‰€å æ®çš„)å„ä¸ªå­è½½æ³¢ä¸Šçš„ä¿®æ­£ç³»æ•°,Hå°ºå¯¸255*1
+    H = ChannelEstimationByPreamble(preamble); % ĞÅµÀ¹À¼Æ,µÃµ½(ÑµÁ·ĞòÁĞËùÕ¼¾İµÄ)¸÷¸ö×ÓÔØ²¨ÉÏµÄĞŞÕıÏµÊı,H³ß´ç255*1
     tap = 20;
-    H = smooth(H, tap); % å¯¹ä¿®æ­£ç³»æ•°åšæŠ½å¤´æ•°ä¸º20çš„æ»‘åŠ¨å¹³å‡
+    H = smooth(H, tap); % ¶ÔĞŞÕıÏµÊı×öspanÎª20µÄ»¬¶¯Æ½¾ù
 
-    FDE = FFT(message); % fft,FDEå°ºå¯¸224*16
+    FDE = FFT(message); % fft,FDE³ß´ç224*16
 
-    % ä½¿ç”¨ä¼°è®¡å‡ºçš„ä¿¡é“ä¿¡æ¯
+    % Ê¹ÓÃ¹À¼Æ³öµÄĞÅµÀĞÅÏ¢
     for i = 1:SToPcol;
-        FDE(:, i) = FDE(:, i) ./ H(DataCarrierPositions - 1); % ?? æ­¤å¤„çš„å­è½½æ³¢å¯¹é½å¯èƒ½æœ‰è¯¯
+        FDE(:, i) = FDE(:, i) ./ H(DataCarrierPositions - 1); % ?? ´Ë´¦µÄ×ÓÔØ²¨¶ÔÆë¿ÉÄÜÓĞÎó
     end
 
-    % å°†FDEåˆ†ä¸ºä¸¤æ”¯ï¼Œä¸€æ”¯å»é™¤åŠŸç‡åˆ†é…ä¹‹åè¿›è¡Œè§£æ˜ å°„ï¼Œå¦ä¸€æ”¯ç›´æ¥é€å…¥è¿­ä»£é€šè·¯ï¼Œè€Œä¸æ˜¯å»é™¤åŠŸç‡åˆ†é…åï¼Œåˆåœ¨è¿­ä»£é€šè·¯ä¸­åŠ è½½åŠŸç‡åˆ†é…
+    % ½«FDE·ÖÎªÁ½Ö§£¬Ò»Ö§È¥³ı¹¦ÂÊ·ÖÅäÖ®ºó½øĞĞ½âÓ³Éä£¬ÁíÒ»Ö§Ö±½ÓËÍÈëµü´úÍ¨Â·£¬¶ø²»ÊÇÈ¥³ı¹¦ÂÊ·ÖÅäºó£¬ÓÖÔÚµü´úÍ¨Â·ÖĞ¼ÓÔØ¹¦ÂÊ·ÖÅä
     FDEforIterating = FDE;
 
-    if On == 1 % å·¥ä½œæ—¶,æ ¹æ®è®­ç»ƒç»“æœ,æ¯ä¸ªå­è½½æ³¢åˆ†é…ç›¸åº”åŠŸç‡
-        load('./data/power_alloc.mat'); % åŠŸç‡åˆ†é…,è®­ç»ƒæ¨¡å¼åæ¥æ”¶æœºåé¦ˆçš„ä¿¡æ¯ä¹‹ä¸€,power_allocå°ºå¯¸1*224
+    if On == 1 % ¹¤×÷Ê±,¸ù¾İÑµÁ·½á¹û,Ã¿¸ö×ÓÔØ²¨·ÖÅäÏàÓ¦¹¦ÂÊ
+        load('./data/power_alloc.mat'); % ¹¦ÂÊ·ÖÅä,ÑµÁ·Ä£Ê½ºó½ÓÊÕ»ú·´À¡µÄĞÅÏ¢Ö®Ò»,power_alloc³ß´ç1*224
 
         for i = 1:SToPcol
-            FDE(DataCarrierPositions - 2, i) = FDE(DataCarrierPositions - 2, i) ./ sqrt(power_alloc'); % é™¤å»åŠŸç‡åˆ†é…,FDEå°ºå¯¸224*16
+            FDE(DataCarrierPositions - 2, i) = FDE(DataCarrierPositions - 2, i) ./ sqrt(power_alloc'); % ³ıÈ¥¹¦ÂÊ·ÖÅä,FDE³ß´ç224*16
         end
 
     end
 
-    decoded = QAM2Bits(FDE); % QAMè§£æ˜ å°„ -> è§£äº¤ç»‡ -> ç»´ç‰¹æ¯”è¯‘ç 
+    decoded = QAM2Bits(FDE); % QAM½âÓ³Éä -> ½â½»Ö¯ -> Î¬ÌØ±ÈÒëÂë
 
-    % ?? FDEforIteratingæ˜¯å¦è¦è¿›è¡Œå½’ä¸€åŒ–
+    % ?? FDEforIteratingÊÇ·ñÒª½øĞĞ¹éÒ»»¯
     for iter = 1:Iteration
-        decoded = Iterating(decoded, iter, FDEforIterating); % åœ¨æ¥æ”¶æœºä¸­è¿­ä»£è¯‘ç ,å¹¶ä¸”,åœ¨è®­ç»ƒæ¨¡å¼ä¸‹è¿›è¡Œæ¯”ç‰¹åˆ†é…
+        decoded = Iterating(decoded, iter, FDEforIterating); % ÔÚ½ÓÊÕ»úÖĞµü´úÒëÂë,²¢ÇÒ,ÔÚÑµÁ·Ä£Ê½ÏÂ½øĞĞ±ÈÌØ·ÖÅä
     end
