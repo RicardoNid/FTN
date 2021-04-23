@@ -1,8 +1,7 @@
 function decoded = Iterating(decoded, i, FDE)
     global On
+    global PowerOn
     global RmsAlloc
-    global SToPcol
-    global DataCarrierPositions
     global Iteration
     global CurrentFrame
     global FrameNum
@@ -14,13 +13,9 @@ function decoded = Iterating(decoded, i, FDE)
     %% 关于此部分代码的理解请参见图NO-DMT DSP
     QAMSymbols = Bits2QAM(decoded); % 旁路1,QAMSymbols
 
-    if On == 1
-        load('./data/power_alloc.mat');
-
-        for i = 1:SToPcol
-            QAMSymbols(:, i) = QAMSymbols(:, i) .* sqrt(power_alloc');
-        end
-
+    if On == 1 % 加功率分配
+        PowerOn = 1;
+        QAMSymbols = PowerOnOff(QAMSymbols);
     end
 
     OFDMSymbols = IFFT(QAMSymbols);
@@ -30,13 +25,10 @@ function decoded = Iterating(decoded, i, FDE)
     %% 旁路汇集部分
     ICI = recovered - QAMSymbols;
     dataQAMSymbols = FDE - ICI;
-    %% 除功率分配
-    if On == 1
 
-        for i = 1:SToPcol
-            dataQAMSymbols(DataCarrierPositions - 2, i) = dataQAMSymbols(DataCarrierPositions - 2, i) ./ sqrt(power_alloc');
-        end
-
+    if On == 1 % 去功率分配
+        PowerOn = 0;
+        dataQAMSymbols = PowerOnOff(dataQAMSymbols);
     end
 
     decoded = QAM2Bits(dataQAMSymbols);

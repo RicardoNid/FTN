@@ -1,6 +1,6 @@
 function OFDMSymbols = CreateOFDMSymbols(bits)
     global On
-    global SToPcol
+    global PowerOn
 
     QAMSymbols = Bits2QAM(bits); % 卷积编码 -> 交织 -> QAM映射
 
@@ -10,12 +10,8 @@ function OFDMSymbols = CreateOFDMSymbols(bits)
     save(file, 'QAMSymbols');
 
     if On == 1 % 工作时,根据训练结果,每个子载波分配相应比功率
-        load('./data/power_alloc.mat'); % 功率分配,训练模式后接收机反馈的信息之一
-
-        for i = 1:SToPcol
-            QAMSymbols(:, i) = QAMSymbols(:, i) .* sqrt(power_alloc'); % 子载波功率分配
-        end
-
+        PowerOn = 1;
+        QAMSymbols = PowerOnOff(QAMSymbols);
     end
 
     OFDMSymbols = IFFT(QAMSymbols); % ifft

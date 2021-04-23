@@ -1,9 +1,3 @@
-%  // ======================================================================
-%  //  Jinan University
-%  //  @Author: JiZhou CanyangXiong
-%  //  @Last Modified time: 2021-03-05
-%  //  @description: 比特分配算法
-%  // ======================================================================
 function [bits_allo, power_allo, total_bits] = chow_algo_all(SNR, N_subc, gap, target_bits)
     %--------------------输入变量 -------------------------
     % SNR          每个子信道的信噪比（1×N_subc)向量 (dB)

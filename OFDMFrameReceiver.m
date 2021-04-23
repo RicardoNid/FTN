@@ -1,5 +1,6 @@
 function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     global On
+    global PowerOn
     global Iteration
     global CPLength
     global DataCarrierPositions
@@ -7,7 +8,9 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     global SToPcol
     global FFTSize
 
-    %% 估计信道和FFT
+    %% 信道估计和修正
+    % hardware: 不同于功率分配,信道估计必然是动态的,不能做成半静态
+    % 信道估计和修正作用于驻留的FDE
     preamble = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength)); % 将收到的子帧分为训练序列和信息序列
     message = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);
 
@@ -22,16 +25,15 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
         FDE(:, i) = FDE(:, i) ./ H(DataCarrierPositions - 1); % ?? 此处的子载波对齐可能有误
     end
 
-    % 将FDE分为两支，一支去除功率分配之后进行解映射，另一支直接送入迭代通路，而不是去除功率分配后，又在迭代通路中加载功率分配
-    FDEforIterating = FDE;
+    % 到这一步,驻留的FDE已经确定
+
+    %% 下面描述迭代通路
+    % 将FDE分为两支，一支去除功率分配之后进入迭代通路，另一支直接驻留在迭代入口，而不是去除功率分配后，又在迭代通路中加载功率分配
+    FDEforIterating = FDE; % 驻留在迭代入口
 
     if On == 1 % 工作时,根据训练结果,每个子载波分配相应功率
-        load('./data/power_alloc.mat'); % 功率分配,训练模式后接收机反馈的信息之一,power_alloc尺寸1*224
-
-        for i = 1:SToPcol
-            FDE(DataCarrierPositions - 2, i) = FDE(DataCarrierPositions - 2, i) ./ sqrt(power_alloc'); % 除去功率分配,FDE尺寸224*16
-        end
-
+        PowerOn = 0;
+        FDE = PowerOnOff(FDE);
     end
 
     decoded = QAM2Bits(FDE); % QAM解映射 -> 解交织 -> 维特比译码

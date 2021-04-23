@@ -5,12 +5,12 @@ function [OFDMSymbols] = IFFT(QAMSymbols)
     global CPLength
     global SToPcol
 
-    %% å°†æ•°æ®"æ”¾ç½®"åˆ°ifftBlock
+    %% ½«Êý¾Ý"·ÅÖÃ"µ½ifftBlock
     ifftBlock = zeros(FFTSize, SToPcol); % padding
-    ifftBlock(DataCarrierPositions, :) = QAMSymbols; % æ”¾ç½®QAMç¬¦å·
-    ifftBlock(FFTSize + 2 - DataCarrierPositions, :) = conj(ifftBlock(DataCarrierPositions, :)); % æ”¾ç½®å…¶å…±è½­
+    ifftBlock(DataCarrierPositions, :) = QAMSymbols; % ·ÅÖÃQAM·ûºÅ
+    ifftBlock(FFTSize + 2 - DataCarrierPositions, :) = conj(ifftBlock(DataCarrierPositions, :)); % ·ÅÖÃÆä¹²éî
 
-    OFDMSymbols = ifft(ifftBlock); % æ ‡å‡†ifft
-    OFDMSymbols = OFDMSymbols(1:length(OFDMPositions), :); % ä»ŽifftBlockæå–ä¿¡æ¯ç¬¦å·
-    OFDMSymbols = [OFDMSymbols(end - CPLength / 2 + 1:end, :); OFDMSymbols; OFDMSymbols(1:CPLength / 2, :)]; % å¢žåŠ å¾ªçŽ¯å‰ç¼€
-    OFDMSymbols = reshape(OFDMSymbols, [], 1); % å¹¶->ä¸²è½¬æ¢,åœ¨ç¡¬ä»¶ä¸Šå¹¶ä¸è¿›è¡Œ
+    OFDMSymbols = ifft(ifftBlock); % ±ê×¼ifft
+    OFDMSymbols = OFDMSymbols(1:length(OFDMPositions), :); % ´ÓifftBlockÌáÈ¡ÐÅÏ¢·ûºÅ
+    OFDMSymbols = [OFDMSymbols(end - CPLength / 2 + 1:end, :); OFDMSymbols; OFDMSymbols(1:CPLength / 2, :)]; % Ôö¼ÓÑ­»·Ç°×º
+    OFDMSymbols = reshape(OFDMSymbols, [], 1); % ²¢->´®×ª»»,ÔÚÓ²¼þÉÏ²¢²»½øÐÐ

@@ -5,7 +5,6 @@
 %  //  @description: 将每种比特调制对应的载波索引进行集合分类
 %  // ======================================================================
 function [bits_alloc_sort, bits_alloc_sub_sum] = bits_alloc_position_sum(bits_alloc)
-    %   Bit corresponding to subcarrier position
     global SubcarriersNum
     bits_alloc_sort = unique(bits_alloc);
 

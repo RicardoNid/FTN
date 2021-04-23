@@ -5,6 +5,10 @@ function OFDMParameters = InitOFDMParameters()
     global On; On = 0;
     % 当前子帧,和随机种子取用/是否进行比特分配计算相关
     global CurrentFrame; CurrentFrame = 1;
+    % 指示当前是进行功率加载还是功率去除,因为matlab不方便枚举,所以比起传参,要求每次修改全局变量更为明显
+    global PowerOn; PowerOn = 1;
+    % 指示当前FFT/IFFT处理的是训练序列还是有效数据,使用全局变量的原因同上
+    global IsPreamble; IsPreamble = 1;
 
     %% OFDM参数
     % 循环前缀长度
@@ -19,7 +23,7 @@ function OFDMParameters = InitOFDMParameters()
     ConvCodeGen = [171, 133];
     global trellis; trellis = poly2trellis (ConvConstLen, ConvCodeGen);
     % 维特比译码抛弃比特数量
-    global tblen; tblen = 120;
+    global tblen; tblen = 90;
     % 编码率
     global ConvCodeRate; ConvCodeRate = 1/2;
 
