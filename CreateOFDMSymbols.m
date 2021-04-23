@@ -9,7 +9,7 @@ function OFDMSymbols = CreateOFDMSymbols(bits)
     file = './data/QAMSymbols_trans.mat';
     save(file, 'QAMSymbols');
 
-    if On == 1
+    if On == 1 % 工作时,根据训练结果,每个子载波分配相应比功率
         load('./data/power_alloc.mat'); % 功率分配,训练模式后接收机反馈的信息之一
 
         for i = 1:SToPcol

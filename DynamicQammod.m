@@ -7,9 +7,9 @@ function QAMSymbols = DynamicQammod(bits)
     global SubcarriersNum
     global ConvCodeRate
 
-    if On == 1 % π§◊˜ ±,∏˘æ›—µ¡∑Ω·π˚,√ø∏ˆ◊”‘ÿ≤®∑÷≈‰œ‡”¶±»Ãÿ ˝(0-8 bits)
+    if On == 1 % Â∑•‰ΩúÊó∂,Ê†πÊçÆËÆ≠ÁªÉÁªìÊûú,ÊØè‰∏™Â≠êËΩΩÊ≥¢ÂàÜÈÖçÁõ∏Â∫îÊØîÁâπÊï∞(0-8 bits)
         %% bit loading %%
-        load('./data/bitAlloc.mat') % ±»Ãÿ∑÷≈‰,—µ¡∑ƒ£ Ω∫ÛΩ” ’ª˙∑¥¿°µƒ–≈œ¢÷Æ“ª, ∫Û¡Ω∏ˆŒƒº˛√Ë ˆµ⁄“ª∏ˆŒƒº˛µƒƒ⁄»›
+        load('./data/bitAlloc.mat') % ÊØîÁâπÂàÜÈÖç,ËÆ≠ÁªÉÊ®°ÂºèÂêéÊé•Êî∂Êú∫ÂèçÈ¶àÁöÑ‰ø°ÊÅØ‰πã‰∏Ä, Âêé‰∏§‰∏™Êñá‰ª∂ÊèèËø∞Á¨¨‰∏Ä‰∏™Êñá‰ª∂ÁöÑÂÜÖÂÆπ
         load('./data/bitAllocSort.mat');
         load('./data/BitAllocSum.mat');
 
@@ -19,26 +19,26 @@ function QAMSymbols = DynamicQammod(bits)
 
         for i = 1:length(bitAllocSort)
 
-            bitAllocated = bitAllocSort(i); % µ±«∞“™¥¶¿Ìµƒ◊”‘ÿ≤®(»∫)±ª∑÷≈‰µƒ±»Ãÿ ˝
+            bitAllocated = bitAllocSort(i); % ÂΩìÂâçË¶ÅÂ§ÑÁêÜÁöÑÂ≠êËΩΩÊ≥¢(Áæ§)Ë¢´ÂàÜÈÖçÁöÑÊØîÁâπÊï∞
 
             if bitAllocated == 0
                 QAMSymbol = 0;
             else
-                bitsLength = OFDMSymbolNumber * bitAllocated * length(BitAllocSum{i}) / ConvCodeRate; % º∆À„◊‹≥§∂»
-                bitsTobeMapped = bits(segmentHead:segmentHead + bitsLength - 1, 1); % “¿’’≥§∂»ªÒ»°¥˝”≥…‰±»Ãÿ
-                segmentHead = bitsLength + segmentHead; % Œ¨ª§¥˝»°±»ÃÿŒª÷√
+                bitsLength = OFDMSymbolNumber * bitAllocated * length(BitAllocSum{i}) / ConvCodeRate; % ËÆ°ÁÆóÊÄªÈïøÂ∫¶
+                bitsTobeMapped = bits(segmentHead:segmentHead + bitsLength - 1, 1); % ‰æùÁÖßÈïøÂ∫¶Ëé∑ÂèñÂæÖÊò†Â∞ÑÊØîÁâπ
+                segmentHead = bitsLength + segmentHead; % Áª¥Êä§ÂæÖÂèñÊØîÁâπ‰ΩçÁΩÆ
 
-                QAMSymbol = Qammod(bitAllocated, bitsTobeMapped); % “¿’’∑÷≈‰±»Ãÿ ˝”≥…‰
-                QAMSymbol = QAMSymbol / RmsAlloc(bitAllocated); % ?? æ≤Ã¨πÈ“ªªØ
-                QAMSymbol = reshape(QAMSymbol, length(BitAllocSum{i}), SToPcol); % ¥Æ->≤¢◊™ªª
+                QAMSymbol = Qammod(bitAllocated, bitsTobeMapped); % ‰æùÁÖßÂàÜÈÖçÊØîÁâπÊï∞Êò†Â∞Ñ
+                QAMSymbol = QAMSymbol / RmsAlloc(bitAllocated); % ?? ÈùôÊÄÅÂΩí‰∏ÄÂåñ
+                QAMSymbol = reshape(QAMSymbol, length(BitAllocSum{i}), SToPcol); % ‰∏≤->Âπ∂ËΩ¨Êç¢
             end
 
-            carrierPosition = BitAllocSum{i}; % ∏√∑÷≈‰±»Ãÿ ˝À˘∂‘”¶µƒ◊”‘ÿ≤®Œª÷√
-            QAMSymbols(carrierPosition, :) = QAMSymbol; % Ω´”≥…‰∫Ûµƒ∑˚∫≈¥Æ->≤¢◊∞ªªÃÓ»Î∂‘”¶◊”‘ÿ≤®Œª÷√
+            carrierPosition = BitAllocSum{i}; % ËØ•ÂàÜÈÖçÊØîÁâπÊï∞ÊâÄÂØπÂ∫îÁöÑÂ≠êËΩΩÊ≥¢‰ΩçÁΩÆ
+            QAMSymbols(carrierPosition, :) = QAMSymbol; % Â∞ÜÊò†Â∞ÑÂêéÁöÑÁ¨¶Âè∑‰∏≤->Âπ∂Ë£ÖÊç¢Â°´ÂÖ•ÂØπÂ∫îÂ≠êËΩΩÊ≥¢‰ΩçÁΩÆ
         end
 
-    else % —µ¡∑ ±,√ø∏ˆ◊”‘ÿ≤®∑÷≈‰πÃ∂®±»Ãÿ(4)
+    else % ËÆ≠ÁªÉÊó∂,ÊØè‰∏™Â≠êËΩΩÊ≥¢ÂàÜÈÖçÂõ∫ÂÆöÊØîÁâπ(4)
         QAMSymbols = Qammod(BitsPerSymbolQAM, bits);
-        QAMSymbols = QAMSymbols / RmsAlloc(4); % ?? æ≤Ã¨πÈ“ªªØ
-        QAMSymbols = reshape(QAMSymbols, SubcarriersNum, SToPcol); % ¥Æ->≤¢◊™ªª
+        QAMSymbols = QAMSymbols / RmsAlloc(4); % ?? ÈùôÊÄÅÂΩí‰∏ÄÂåñ
+        QAMSymbols = reshape(QAMSymbols, SubcarriersNum, SToPcol); % ‰∏≤->Âπ∂ËΩ¨Êç¢
     end

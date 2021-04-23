@@ -1,4 +1,4 @@
-function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE)
+function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDEInner)
     global On
     global RmsAlloc
     global SToPcol
@@ -7,7 +7,8 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE)
     global CurrentFrame
     global FrameNum
 
-    QAMSymbols = Bits2QAM(decodedMsg_HD);
+    %% 关于此部分代码的理解请参见图NO-DMT DSP
+    QAMSymbols = Bits2QAM(decodedMsg_HD); % 旁路1,QAMSymbols
 
     if On == 1
         load('./data/power_alloc.mat');
@@ -20,25 +21,11 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE)
 
     OFDMSymbols = IFFT(QAMSymbols);
 
-    recovered = FFT(OFDMSymbols);
+    recovered = FFT(OFDMSymbols); % 旁路2,recovered
 
-    if On == 1
-        % 接收信号进来没有进行功率分配 % FDE为接收端FFT输出信号
-        for i = 1:SToPcol
-            FDE(DataCarrierPositions - 2, i) = FDE(DataCarrierPositions - 2, i) .* sqrt(power_alloc');
-        end
-
-    else
-
-        FDE = FDE / rms(FDE);
-
-        QAMSymbols = reshape(QAMSymbols, [], 1);
-        recovered = reshape(recovered, [], 1);
-
-    end
-
+    %% 旁路汇集部分
     ICI = recovered - QAMSymbols;
-    dataQAMSymbols = FDE - ICI;
+    dataQAMSymbols = FDEInner - ICI;
     %% 除功率分配
     if On == 1
 
@@ -51,7 +38,7 @@ function decodedMsg_HD = Iterating(decodedMsg_HD, i, FDE)
     decodedMsg_HD = QAM2Bits(dataQAMSymbols);
 
     if On == 0 && CurrentFrame == FrameNum && i == Iteration
-        % 此处可能也是不必要的 ??
+        % ?? 此处可能也是不必要的
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
         Alloc(dataQAMSymbols);

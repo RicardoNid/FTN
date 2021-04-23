@@ -13,4 +13,4 @@ function [OFDMSymbols] = IFFT(QAMSymbols)
     OFDMSymbols = ifft(ifftBlock); % 标准ifft
     OFDMSymbols = OFDMSymbols(1:length(OFDMPositions), :); % 从ifftBlock提取信息符号
     OFDMSymbols = [OFDMSymbols(end - CPLength / 2 + 1:end, :); OFDMSymbols; OFDMSymbols(1:CPLength / 2, :)]; % 增加循环前缀
-    OFDMSymbols = reshape(OFDMSymbols, [], 1); % 并->串转换
+    OFDMSymbols = reshape(OFDMSymbols, [], 1); % 并->串转换,在硬件上并不进行

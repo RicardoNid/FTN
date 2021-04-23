@@ -21,4 +21,4 @@ function [H] = ChannelEstimationByPreamble(preamble)
         ratio(:, i) = recvQAMSignal(:, i) ./ preambleQAMSymbols;
     end
 
-    H = mean(ratio, 2); % 对两个比值需求均值得到信道估计
+    H = mean(ratio, 2); % 对两个比值序列求均值得到信道估计
