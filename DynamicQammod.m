@@ -6,7 +6,7 @@ function QAMSymbols = DynamicQammod(bits)
     global ConvCodeRate
 
     %% bit loading %%
-    load('./data/bitAlloc.mat') % 比特分配,训练模式后接收机反馈的信息之一, 后两个文件描述第一个文件的内容
+    load('./data/bitAlloc.mat') % 比特分配
     load('./data/bitAllocSort.mat');
     load('./data/bitAllocSum.mat');
 
