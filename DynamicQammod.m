@@ -26,7 +26,8 @@ function QAMSymbols = DynamicQammod(bits)
             segmentHead = bitsLength + segmentHead; % 维护待取比特位置
 
             QAMSymbol = Qammod(bitAllocated, bitsTobeMapped); % 依照分配比特数映射
-            QAMSymbol = QAMSymbol / RmsAlloc(bitAllocated); % ?? 静态归一化
+            % QAMSymbol = QAMSymbol / RmsAlloc(bitAllocated); % ?? 静态归一化
+            QAMSymbol = QAMSymbol / rms(QAMSymbol); % ?? 静态归一化
             QAMSymbol = reshape(QAMSymbol, length(bitAllocSum{i}), SToPcol); % 串->并转换
         end
 
