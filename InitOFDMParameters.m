@@ -9,6 +9,7 @@ function OFDMParameters = InitOFDMParameters()
     global PowerOn; PowerOn = 1;
     % 指示当前FFT/IFFT处理的是训练序列还是有效数据,使用全局变量的原因同上
     global IsPreamble; IsPreamble = 1;
+    global DoInterleave; DoInterleave = 1;
 
     %% 参数,过程中不可变
     %% OFDM参数
@@ -63,12 +64,12 @@ function OFDMParameters = InitOFDMParameters()
 
     %% 测试规模和随机数种子参数
     global PreambleSeed; PreambleSeed = 20;
-    global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
+    % global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
     % global Seed; Seed = randi(30, [1, 20]);
     % global FrameNum; FrameNum = 1;
-    global FrameNum; FrameNum = 20;
-    % global Seed; Seed = randi(100, [1, 100]);
-    % global FrameNum; FrameNum = 100;
+    % global FrameNum; FrameNum = 20;
+    global Seed; Seed = randi(100, [1, 100]);
+    global FrameNum; FrameNum = 100;
 
     %% Chow算法相关变量,过程中可变
     global BER; BER = 1E-3;

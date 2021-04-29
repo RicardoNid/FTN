@@ -5,6 +5,9 @@ function OFDMSymbols = OFDMFrameGenerator(msgBits)
     global PowerOn
     global PreambleNumber
 
+    % global DoInterleave
+    % DoInterleave = 1;
+
     %% 数据通路
     % 读取预先存储的训练序列QAM符号
     load './data/preambleQAMSymbols' preambleQAMSymbols
