@@ -4,7 +4,6 @@ function bits = Qamdemod(bitAllocated, QAMSymbols)
 
     if bitAllocated == 3;
 
-        % 比特分配为3时,没有进行归一化
         QAMSymbols = QAMSymbols * RmsAlloc(3);
         QAMSymbols = QAMSymbols';
         [~, index] = min(abs(repmat(QAMSymbols, 8, 1) - repmat(transpose(QAM8), 1, length(QAMSymbols))));

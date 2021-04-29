@@ -57,6 +57,10 @@ function OFDMParameters = InitOFDMParameters()
     % 不同比特数量下,QAM符号rms的理论值
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
+    %% 信道均衡参数
+    % 均衡系数的滑动平均抽头数
+    global HTap; HTap = 20;
+
     %% 测试规模和随机数种子参数
     global PreambleSeed; PreambleSeed = 20;
     global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];

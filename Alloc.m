@@ -54,11 +54,11 @@ function none = Alloc(recoveredSymbols)
     end
 
     bits_alloc = bits_alloc_record;
-    power_alloc = power_alloc_record';
+    powerAlloc = power_alloc_record';
 
     [bitAllocSort, bitAllocSum] = bits_alloc_position_sum(bits_alloc');
     bitAlloc = bits_alloc;
     save './data/bitAlloc' bitAlloc
     save './data/bitAllocSort' bitAllocSort;
     save './data/bitAllocSum' bitAllocSum;
-    save './data/power_alloc' power_alloc;
+    save './data/powerAlloc' powerAlloc;

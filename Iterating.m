@@ -4,8 +4,6 @@ function decoded = Iterating(decoded, i, FDE)
     global PowerOn
     global RmsAlloc
     global Iteration
-    global CurrentFrame
-    global FrameNum
 
     %% 关于FDE的命名我又做了仔细考虑,之前内外功率分配同时去除是对外部的QAM解映射产生了影响,而不是功率分配累积
     % Iterating内是局部作用域,FDE命名没有side effcet,因此改回FDE
@@ -14,10 +12,8 @@ function decoded = Iterating(decoded, i, FDE)
     %% 关于此部分代码的理解请参见图NO-DMT DSP
     QAMSymbols = Bits2QAM(decoded); % 旁路1,QAMSymbols
 
-    if On == 1 % 加功率分配
-        PowerOn = 1;
-        QAMSymbols = PowerOnOff(QAMSymbols);
-    end
+    PowerOn = 1; % 加功率分配
+    QAMSymbols = PowerOnOff(QAMSymbols);
 
     IsPreamble = 0;
     OFDMSymbols = IFFT(QAMSymbols);
@@ -28,10 +24,8 @@ function decoded = Iterating(decoded, i, FDE)
     ICI = recovered - QAMSymbols;
     dataQAMSymbols = FDE - ICI;
 
-    if On == 1 % 去功率分配
-        PowerOn = 0;
-        dataQAMSymbols = PowerOnOff(dataQAMSymbols);
-    end
+    PowerOn = 0; % 去功率分配
+    dataQAMSymbols = PowerOnOff(dataQAMSymbols);
 
     decoded = QAM2Bits(dataQAMSymbols);
 
@@ -40,5 +34,4 @@ function decoded = Iterating(decoded, i, FDE)
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
         Alloc(dataQAMSymbols);
-
     end

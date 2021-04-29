@@ -15,10 +15,10 @@ function OFDMSymbols = OFDMFrameGenerator(msgBits)
     else
         % 工作模式时,将信息比特加工为QAM符号
         msgQAMSymbols = Bits2QAM(msgBits); % 卷积编码 -> 交织 -> QAM映射
-        % 根据训练结果,每个子载波分配相应功率
-        PowerOn = 1;
-        msgQAMSymbols = PowerOnOff(msgQAMSymbols);
     end
+
+    PowerOn = 1; % 加功率分配
+    msgQAMSymbols = PowerOnOff(msgQAMSymbols);
 
     %% 将训练QAM符号加工为OFDM符号
     IsPreamble = 1;

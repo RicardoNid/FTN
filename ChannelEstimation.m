@@ -1,8 +1,8 @@
-function [H] = ChannelEstimationByPreamble(recvPreambleQAMSymbols)
+function [H] = ChannelEstimation(recvPreambleQAMSymbols)
     global PreambleNumber
     global PreambleCarriersNum
+    global HTap
 
-    % hardware: 此处为ROM
     load './data/preambleQAMSymbols' % 接收机内置preambleQAMSymbol的QAM符号序列
 
     %% 自此以下的部分需要硬件实现
@@ -14,3 +14,4 @@ function [H] = ChannelEstimationByPreamble(recvPreambleQAMSymbols)
     end
 
     H = mean(ratio, 2); % 对两个比值序列求均值得到信道估计
+    H = smooth(H, HTap); % 对修正系数做span为20的滑动平均
