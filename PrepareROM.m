@@ -4,16 +4,25 @@ function none = PrepareROM()
     global PreambleBitsPerSymbolQAM
     global PreambleSeed
     global PreambleBitNumber
+    global SubcarriersNum
 
-    %% Е╟├Х╝╜Г╩┐Ф╞■Г┴╧Е┼═Е╥╔Д╦╨QAMГ╛╕Е▐╥
+    %% н╢я╣а╥й╠╣д╠хль╥жеД,кЫспвсть╡╗оЮм╛
+    bitAlloc = ones(SubcarriersNum, 1) * PreambleBitsPerSymbolQAM;
+    [bitAllocSort, bitAllocSum] = bits_alloc_position_sum(bitAlloc');
+    % н╢я╣а╥й╠RAMжп╣д╠хль╥жеД,я╣а╥╨С╩А╠╩╦╡╦г
+    save './data/bitAlloc' bitAlloc
+    save './data/bitAllocSort' bitAllocSort;
+    save './data/bitAllocSum' bitAllocSum;
+
+    %% ╫╚я╣а╥╠хль╪с╧╓н╙QAM╥Ш╨е
     preambleBits = randint(PreambleBitNumber, 1, 2, PreambleSeed);
     preambleQAMSymbols = GrayQAMCoder(preambleBits, PreambleBitsPerSymbolQAM);
     preambleQAMSymbols = preambleQAMSymbols / RmsAlloc(4);
-    % Е╝·И≥┘Е╝·Г▌╟Ф≈╤,Е▐▒Е╟└/Ф▌╔Ф■╤Ф°╨И┐╫Д╩▌ROMД╦╜Х╞╩Е▐√И╒└Е┘┬Е╜≤Е┌╗Г └Х╝╜Г╩┐Е╨▐Е┬≈QAMГ╛╕Е▐╥,Е╝·И╙▄Д╦╜,Д╩╔Ф√┤Д╩╤Е╜≤Е▐√Е╫╒Е╪▐Ф╗║Ф▀÷
+    % й╣╪йй╣ожй╠,╥╒иД/╫сйу╩З╤╪╢сROMжп╤ах║т╓ох╢Ф╢╒╣дя╣а╥пРапQAM╥Ш╨е,й╣яИжп,ртнд╪Ч╢Фх║пнй╫дёдБ
     save './data/preambleQAMSymbols' preambleQAMSymbols
 
-    msgBits = BitGen(); % Е╜░Е╦╖Г └Д©║Ф│╞Ф╞■Г┴╧
-    %% Е╟├Д©║Ф│╞Ф╞■Г┴╧Е┼═Е╥╔Д╦╨QAMГ╛╕Е▐╥
-    msgQAMSymbols = Bits2QAM(msgBits); % Е█╥Г╖╞Г╪√Г═│ -> Д╨╓Г╩┤ -> QAMФ≤═Е╟└
-    % Е╝·И≥┘Е╝·Г▌╟Ф≈╤,Ф╞■Г┴╧Е┬├И┘█Ф≈╤,Е▐▒Е╟└/Ф▌╔Ф■╤Ф°╨И┐╫Д╩▌ROMД╦╜Х╞╩Е▐√И╒└Е┘┬Е╜≤Е┌╗Г └Х╝╜Г╩┐Е╜░Е╦╖Г └QAMГ╛╕Е▐╥,Е╝·И╙▄Д╦╜,Д╩╔Ф√┤Д╩╤Е╜≤Е▐√Е╫╒Е╪▐Ф╗║Ф▀÷
+    msgBits = BitGen(); % всж║╣дпео╒╠хль
+    %% ╫╚пео╒╠хль╪с╧╓н╙QAM╥Ш╨е
+    msgQAMSymbols = Bits2QAM(msgBits); % ╬М╩Щ╠ЮбК -> ╫╩ж╞ -> QAMсЁиД
+    % й╣╪йй╣ожй╠,╠хль╥жеДй╠,╥╒иД/╫сйу╩З╤╪╢сROMжп╤ах║т╓ох╢Ф╢╒╣дя╣а╥всж║╣дQAM╥Ш╨е,й╣яИжп,ртнд╪Ч╢Фх║пнй╫дёдБ
     save './data/msgQAMSymbols' msgQAMSymbols;

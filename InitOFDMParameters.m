@@ -1,6 +1,6 @@
 function OFDMParameters = InitOFDMParameters()
 
-    %% 控制参数,通过改变它们来控制仿真流程
+    %% 控制变量,过程中可变,通过改变它们来控制仿真流程
     % on = 0 训练(计算比特/功率分配)模式，on = 1 工作(加载比特/功率分配)模式
     global On; On = 0;
     % 当前子帧,和随机种子取用/是否进行比特分配计算相关
@@ -10,6 +10,7 @@ function OFDMParameters = InitOFDMParameters()
     % 指示当前FFT/IFFT处理的是训练序列还是有效数据,使用全局变量的原因同上
     global IsPreamble; IsPreamble = 1;
 
+    %% 参数,过程中不可变
     %% OFDM参数
     % 循环前缀长度
     global CPLength; CPLength = 20;
@@ -28,6 +29,7 @@ function OFDMParameters = InitOFDMParameters()
     % 编码率
     global ConvCodeRate; ConvCodeRate = 1/2;
 
+    %% OFDM系统整体参数
     % Symbol
     global OFDMSymbolNumber; OFDMSymbolNumber = 8;
     global BitsPerSymbolQAM; BitsPerSymbolQAM = 4;
@@ -42,8 +44,8 @@ function OFDMParameters = InitOFDMParameters()
     % 帧长度
     global BitNumber; BitNumber = length(DataCarrierPositions) * OFDMSymbolNumber * BitsPerSymbolQAM;
     global PreambleBitNumber; PreambleBitNumber = length(PreambleCarrierPositions) * PreambleBitsPerSymbolQAM;
-    %% Seed
-    global PreambleSeed; PreambleSeed = 20;
+    % 迭代次数
+    global Iteration; Iteration = 5;
 
     %% 交织参数
     % 交织深度
@@ -55,10 +57,8 @@ function OFDMParameters = InitOFDMParameters()
     % 不同比特数量下,QAM符号rms的理论值
     global RmsAlloc; RmsAlloc = [1, sqrt(2), sqrt(3 + sqrt(3)), sqrt(10), sqrt(20), sqrt(42), sqrt(82), sqrt(170)];
 
-    %% 系统整体参数
-    global Iteration; Iteration = 5;
-
-    %% 测试规模参数
+    %% 测试规模和随机数种子参数
+    global PreambleSeed; PreambleSeed = 20;
     global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
     % global Seed; Seed = randi(30, [1, 20]);
     % global FrameNum; FrameNum = 1;
@@ -66,7 +66,7 @@ function OFDMParameters = InitOFDMParameters()
     % global Seed; Seed = randi(100, [1, 100]);
     % global FrameNum; FrameNum = 100;
 
-    %% Chow算法相关
+    %% Chow算法相关变量,过程中可变
     global BER; BER = 1E-3;
     global SER; SER = 1 - (1 - BER)^4;
     global Gap; Gap = 1/3 * (qfuncinv(SER / 4))^2;
