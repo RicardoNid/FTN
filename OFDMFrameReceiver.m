@@ -9,9 +9,6 @@ function [decoded] = OFDMFrameReceiver(recvOFDMFrame)
     global FFTSize
     global RmsAlloc
 
-    % global DoInterleave
-    % DoInterleave = 1;
-
     %% 下面部分对应于图1
     recvPreambleOFDMSymbols = recvOFDMFrame(1:PreambleNumber * (FFTSize + CPLength)); % 将收到的子帧分为训练序列和信息序列
     recvMsgOFDMSymbols = recvOFDMFrame(PreambleNumber * (FFTSize + CPLength) + 1:end);

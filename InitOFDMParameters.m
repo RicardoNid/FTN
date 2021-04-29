@@ -9,7 +9,7 @@ function OFDMParameters = InitOFDMParameters()
     global PowerOn; PowerOn = 1;
     % 指示当前FFT/IFFT处理的是训练序列还是有效数据,使用全局变量的原因同上
     global IsPreamble; IsPreamble = 1;
-    global DoInterleave; DoInterleave = 1;
+    % global DoInterleave; DoInterleave = 1;
 
     %% 参数,过程中不可变
     %% OFDM参数

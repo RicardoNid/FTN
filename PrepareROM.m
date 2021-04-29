@@ -6,9 +6,6 @@ function none = PrepareROM()
     global PreambleBitNumber
     global SubcarriersNum
 
-    % global DoInterleave
-    % DoInterleave = 1;
-
     %% 准备分配数据
     % 未训练时的比特分配,所有子载波相同
     bitAlloc = ones(SubcarriersNum, 1) * PreambleBitsPerSymbolQAM;
