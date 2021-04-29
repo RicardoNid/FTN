@@ -18,6 +18,7 @@ function none = Alloc(recoveredSymbols)
 
     % 因为上面设置的gap由设定的BER得来，但不一定是最优的，通过下面的方式，找到该SNR所能支持的最优的gap
     % 没有任何比特被分配时,往flag = 1的方向调整目标
+    % ?? 当前逻辑中,使用的比特/功率分配是chow算法倒数第二次运行的结果,这是正确的行为吗?
     if total_bits == 0
         display('mode 1')
         flag = 1;

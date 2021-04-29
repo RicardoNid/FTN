@@ -9,9 +9,9 @@ function none = Run()
 
     for cir = 1:FrameNum
         %% 发射机
-        bits = BitGen(); % 子帧的信息比特
-        bitsAllFrame = [bitsAllFrame; bits]; % 记录信息比特
-        OFDMFrame = OFDMFrameGenerator(bits); % 发射机加工,得到子帧,发出
+        msgBits = BitGen(); % 子帧的信息比特
+        bitsAllFrame = [bitsAllFrame; msgBits]; % 记录信息比特
+        OFDMFrame = OFDMFrameGenerator(msgBits); % 发射机加工,得到子帧,发出
         %% 信道
         OFDMFrame = filter([1, 0.8, 0.1, 0.05, 0.01, 0.005], 1, OFDMFrame);
         SNR = 12;
