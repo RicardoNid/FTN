@@ -5,12 +5,15 @@ function none = Alloc(recoveredSymbols)
     global SER
     global Gap
     global Miu
+    global RmsAlloc
+    global BitsPerSymbolQAM
 
     %% 比特分配的依据是最后一次迭代产生的差值QAM符号和真实QAM符号
     % 实际实现中,比特分配采用固定的子帧,对应的QAM符号,同时存储在接收机与发射机
 
-    load './data/QAMSymbolsForAlloc'
-    SNR = SNRLocation(recoveredSymbols, QAMSymbolsForAlloc); % SNR是对比真实QAM符号和迭代后恢复的QAM符号得到
+    load './data/msgQAMSymbols'
+    msgQAMSymbols = msgQAMSymbols * RmsAlloc(BitsPerSymbolQAM);
+    SNR = SNRLocation(recoveredSymbols, msgQAMSymbols); % SNR是对比真实QAM符号和迭代后恢复的QAM符号得到
 
     % 初次调用
     [bits_allo, power_allo, total_bits] = chow_algo_all(SNR, Gap);

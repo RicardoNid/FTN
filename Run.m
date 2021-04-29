@@ -1,13 +1,20 @@
 function none = Run()
     global CurrentFrame
     global FrameNum
+    global On
 
     bitsAllFrame = []; % 发射机处理前
     debitsAllFrame = []; % 收集接收结果
 
     CurrentFrame = 1;
 
-    for cir = 1:FrameNum
+    if On == 0
+        TrueFrameNum = 1;
+    else
+        TrueFrameNum = FrameNum;
+    end
+
+    for cir = 1:TrueFrameNum
         %% 发射机
         msgBits = BitGen(); % 子帧的信息比特
         bitsAllFrame = [bitsAllFrame; msgBits]; % 记录信息比特

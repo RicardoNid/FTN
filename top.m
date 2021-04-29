@@ -3,6 +3,7 @@ warning off all
 clc
 
 InitOFDMParameters(); % 初始化全局变量
+PrepareROM(); % 将无需硬件计算(存储在ROM中)的数据准备好
 global On
 global CurrentFrame
 

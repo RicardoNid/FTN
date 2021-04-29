@@ -3,24 +3,19 @@ function OFDMSymbols = OFDMFrameGenerator(msgBits)
     global On
     global IsPreamble
     global PowerOn
-    global RmsAlloc
-    global BitsPerSymbolQAM
-    global PreambleBitsPerSymbolQAM
     global PreambleNumber
-    global PreambleSeed
-    global PreambleBitNumber
 
     %% 数据通路
-    %% 将训练比特加工为QAM符号
+    % 读取预先存储的训练序列QAM符号
+    load './data/preambleQAMSymbols' preambleQAMSymbols
 
-    preambleBits = randint(PreambleBitNumber, 1, 2, PreambleSeed);
-    preambleQAMSymbols = GrayQAMCoder(preambleBits, PreambleBitsPerSymbolQAM);
-    preambleQAMSymbols = preambleQAMSymbols / RmsAlloc(4);
-
-    %% 将信息比特加工为QAM符号
-    msgQAMSymbols = Bits2QAM(msgBits); % 卷积编码 -> 交织 -> QAM映射
-
-    if On == 1 % 工作时,根据训练结果,每个子载波分配相应比功率
+    if On == 0 % 训练模式时,读取预先存储的训练子帧QAM符号
+        % msgQAMSymbols = Bits2QAM(msgBits);
+        load './data/msgQAMSymbols'
+    else
+        % 工作模式时,将信息比特加工为QAM符号
+        msgQAMSymbols = Bits2QAM(msgBits); % 卷积编码 -> 交织 -> QAM映射
+        % 根据训练结果,每个子载波分配相应功率
         PowerOn = 1;
         msgQAMSymbols = PowerOnOff(msgQAMSymbols);
     end
@@ -35,11 +30,3 @@ function OFDMSymbols = OFDMFrameGenerator(msgBits)
 
     %% 拼接训练和信息序列
     OFDMSymbols = [repmat(preambleOFDMSymbols, PreambleNumber, 1); msgOFDMSymbols];
-
-    %% 旁路和说明
-    % 实际实现时,发射/接收机都从ROM中读取预先存储的训练序列QAM符号,实验中,以文件存取形式模拟
-    save './data/preambleQAMSymbols' preambleQAMSymbols
-    % 保存QAMSymbols用于比特分配
-    % 实际实现时,比特分配时,发射/接收机都从ROM中读取预先存储的训练子帧的QAM符号,实验中,以文件存取形式模拟
-    QAMSymbolsForAlloc = msgQAMSymbols * RmsAlloc(BitsPerSymbolQAM);
-    save './data/QAMSymbolsForAlloc' QAMSymbolsForAlloc;

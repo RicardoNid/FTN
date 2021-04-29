@@ -35,7 +35,7 @@ function decoded = Iterating(decoded, i, FDE)
 
     decoded = QAM2Bits(dataQAMSymbols);
 
-    if On == 0 && CurrentFrame == FrameNum && i == Iteration
+    if On == 0 && i == Iteration
         % ?? 此处可能也是不必要的
         dataQAMSymbols = dataQAMSymbols * RmsAlloc(4);
 
