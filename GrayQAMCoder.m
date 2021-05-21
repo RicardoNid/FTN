@@ -19,4 +19,5 @@ function QAMSymbols = GrayQAMCoder(bits, BitsPerSymbol)
     ConstellationSize = 2^BitsPerSymbol;
     symbols = bi2de(reshape(bits, BitsPerSymbol, []).', 'left-msb');
     symbols = bin2gray(symbols, 'qam', ConstellationSize);
+    % QAMSymbols = modulate(modem.qammod(ConstellationSize), symbols);
     QAMSymbols = modulate(modem.qammod(ConstellationSize), symbols);
