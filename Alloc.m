@@ -29,7 +29,7 @@ function none = Alloc(recoveredSymbols)
         while (BER > 0) && (BER < 0.2) && (total_bits == 0)
             BER = BER + flag * Miu;
             SER = 1 - (1 - BER)^4;
-            Gap = 1/3 * (qfuncinv(SER / 4))^2;
+            Gap = 1/3 * ((SER / 4))^2;
             bits_alloc_record = bits_allo;
             power_alloc_record = power_allo;
             [bits_allo, power_allo, total_bits] = chow_algo_all(SNR, Gap);

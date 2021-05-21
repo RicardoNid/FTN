@@ -15,7 +15,7 @@ function OFDMParameters = InitOFDMParameters()
     %% OFDM参数
     % 循环前缀长度
     global CPLength; CPLength = 20;
-    % 训练序列长度
+    % 训练序列重复次数
     global PreambleNumber; PreambleNumber = 2;
     % fft尺寸
     global FFTSize; FFTSize = 512;
@@ -64,12 +64,12 @@ function OFDMParameters = InitOFDMParameters()
 
     %% 测试规模和随机数种子参数
     global PreambleSeed; PreambleSeed = 20;
-    % global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
+    global Seed; Seed = [30, 13, 21, 20, 8, 9, 15, 17, 19, 12, 11, 30, 25, 27, 26, 22, 14, 7, 23, 29];
     % global Seed; Seed = randi(30, [1, 20]);
     % global FrameNum; FrameNum = 1;
-    % global FrameNum; FrameNum = 20;
-    global Seed; Seed = randi(100, [1, 100]);
-    global FrameNum; FrameNum = 100;
+    global FrameNum; FrameNum = 20;
+    % global Seed; Seed = randi(100, [1, 100]);
+    % global FrameNum; FrameNum = 100;
 
     %% Chow算法相关变量,过程中可变
     global BER; BER = 1E-3;
